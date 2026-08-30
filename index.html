@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>الأثر</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <div id="app">
+
+    <!-- شاشة تسجيل الدخول -->
+    <section id="auth-screen">
+
+      <div class="logo">
+        الأثر
+      </div>
+
+      <p class="tagline">
+        بعض الأشياء لا ينبغي أن تصل الآن.<br>
+        اترك شيئًا للمستقبل.
+      </p>
+
+      <div class="auth-box">
+
+        <h2 id="auth-title">
+          إنشاء حساب
+        </h2>
+
+        <input
+          id="display-name"
+          type="text"
+          placeholder="الاسم"
+        >
+
+        <input
+          id="email"
+          type="email"
+          placeholder="البريد الإلكتروني"
+        >
+
+        <input
+          id="password"
+          type="password"
+          placeholder="كلمة المرور"
+        >
+
+        <button id="auth-button">
+          إنشاء الحساب
+        </button>
+
+        <button
+          id="switch-auth"
+          class="text-button"
+        >
+          لدي حساب بالفعل
+        </button>
+
+        <div id="auth-message"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- التطبيق بعد تسجيل الدخول -->
+    <section
+      id="main-screen"
+      class="hidden"
+    >
+
+      <header class="top-bar">
+
+        <div>
+          <strong>الأثر</strong>
+          <span id="user-name"></span>
+        </div>
+
+        <button id="logout-button">
+          خروج
+        </button>
+
+      </header>
+
+
+      <!-- التنقل -->
+
+      <nav class="navigation">
+
+        <button
+          data-page="home"
+          class="nav-button active"
+        >
+          الرئيسية
+        </button>
+
+        <button
+          data-page="traces"
+          class="nav-button"
+        >
+          آثاري
+        </button>
+
+        <button
+          data-page="explore"
+          class="nav-button"
+        >
+          🌍 استكشاف
+        </button>
+
+        <button
+          data-page="profile"
+          class="nav-button"
+        >
+          ملفي
+        </button>
+
+      </nav>
+
+
+      <!-- الرئيسية -->
+
+      <section
+        id="page-home"
+        class="page"
+      >
+
+        <div class="hero">
+
+          <span class="small-title">
+            الآن
+          </span>
+
+          <h1>
+            اترك أثرًا<br>
+            للمستقبل.
+          </h1>
+
+          <p>
+            اكتب شيئًا تريد أن يبقى.
+            <br>
+            ربما تقرؤه أنت لاحقًا،
+            وربما يصل إلى شخص اخترته.
+          </p>
+
+          <button
+            id="new-trace-button"
+            class="primary-button"
+          >
+            اترك أثرًا
+          </button>
+
+        </div>
+
+
+        <!-- إنشاء أثر -->
+
+        <div
+          id="trace-form"
+          class="card hidden"
+        >
+
+          <h2>
+            أثر جديد
+          </h2>
+
+          <textarea
+            id="trace-message"
+            placeholder="اكتب أثرك هنا..."
+            maxlength="5000"
+          ></textarea>
+
+          <div class="form-footer">
+
+            <span id="character-count">
+              0 / 5000
+            </span>
+
+            <div>
+
+              <button
+                id="cancel-trace"
+                class="secondary-button"
+              >
+                إلغاء
+              </button>
+
+              <button
+                id="save-trace"
+                class="primary-button"
+              >
+                حفظ الأثر
+              </button>
+
+            </div>
+
+          </div>
+
+          <div id="trace-message-status"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- الآثار -->
+
+      <section
+        id="page-traces"
+        class="page hidden"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h2>
+              آثاري
+            </h2>
+
+            <span
+              id="trace-count"
+              class="muted"
+            >
+              0 أثر
+            </span>
+
+          </div>
+
+          <button
+            id="new-trace-button-2"
+            class="primary-button"
+          >
+            أثر جديد
+          </button>
+
+        </div>
+
+
+        <div id="trace-list">
+
+          <div class="empty-state">
+
+            لم تترك أثرًا بعد.
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- استكشاف -->
+
+      <section
+        id="page-explore"
+        class="page hidden"
+      >
+
+        <div class="page-header">
+
+          <div>
+
+            <h2>🌍 استكشاف</h2>
+
+            <span class="muted">آثار من مستخدمين آخرين</span>
+
+          </div>
+
+        </div>
+
+        <div id="explore-list" class="trace-list"></div>
+
+      </section>
+
+
+      <!-- الملف الشخصي -->
+
+      <section
+        id="page-profile"
+        class="page hidden"
+      >
+
+        <div class="profile-card">
+
+          <div
+            id="profile-avatar"
+            class="avatar"
+          >
+            أ
+          </div>
+
+          <h2 id="profile-name">
+            —
+          </h2>
+
+          <p
+            id="profile-email"
+            class="muted"
+          >
+            —
+          </p>
+
+          <label class="upload-button">
+
+            تغيير الصورة
+
+            <input
+              id="avatar-input"
+              type="file"
+              accept="image/*"
+            >
+
+          </label>
+
+          <div id="profile-status"></div>
+
+        </div>
+
+      </section>
+
+    </section>
+
+  </div>
+
+
+  <!-- JavaScript -->
+
+  <script
+    type="module"
+    src="js/app.js"
+  ></script>
+
+</body>
+</html>
