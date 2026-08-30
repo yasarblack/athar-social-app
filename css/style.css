@@ -488,6 +488,95 @@ button {
   border-color: #666675;
 }
 
+.time-lock-section {
+  margin: 15px 0;
+
+  padding: 12px;
+
+  background: #0c0c11;
+
+  border: 1px solid #1a1a22;
+
+  border-radius: 10px;
+}
+
+.time-lock-section label {
+  display: flex;
+
+  align-items: center;
+
+  color: #999;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.time-lock-section input[type="checkbox"] {
+  margin-right: 8px;
+
+  cursor: pointer;
+
+  width: 18px;
+
+  height: 18px;
+}
+
+#time-lock-options {
+  margin-top: 12px;
+
+  padding-top: 12px;
+
+  border-top: 1px solid #1a1a22;
+}
+
+#unlock-datetime {
+  width: 100%;
+
+  padding: 10px;
+
+  margin-bottom: 10px;
+
+  background: #000;
+
+  color: white;
+
+  border: 1px solid #292933;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+#unlock-datetime:focus {
+  outline: none;
+
+  border-color: #666675;
+}
+
+.countdown {
+  font-size: 13px;
+
+  color: #666673;
+
+  margin-top: 8px;
+
+  text-align: center;
+
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 .form-footer {
   display: flex;
 
@@ -612,6 +701,26 @@ button {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
+.trace.locked {
+  border-color: #666673;
+
+  position: relative;
+}
+
+.trace.locked::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.4);
+
+  border-radius: 16px;
+
+  pointer-events: none;
+}
+
 .trace-author {
   display: flex;
 
@@ -646,6 +755,16 @@ button {
   font-size: 12px;
 
   margin-top: 10px;
+}
+
+.countdown-info {
+  color: #666673;
+
+  font-size: 12px;
+
+  margin-top: 6px;
+
+  animation: pulse 1s ease-in-out infinite;
 }
 
 .trace .secondary-button {
@@ -784,6 +903,18 @@ button {
     font-size: 15px;
   }
 
+  .time-lock-section {
+    margin: 12px 0;
+
+    padding: 10px;
+  }
+
+  #unlock-datetime {
+    padding: 8px;
+
+    font-size: 13px;
+  }
+
   .form-footer {
     flex-direction: column;
 
@@ -808,6 +939,10 @@ button {
 
   .logo {
     font-size: clamp(42px, 12vw, 56px);
+  }
+
+  .time-lock-section label {
+    font-size: 13px;
   }
 
 }
