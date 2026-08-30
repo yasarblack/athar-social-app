@@ -17,12 +17,14 @@ import {
   createTrace,
   getMyTraces,
   deleteTrace,
-  getAllTraces
+  getAllTraces,
+  unlockTrace
 } from "./traces.js";
 
 
 let currentUser = null;
 let isRegisterMode = true;
+let countdownIntervals = new Map();
 
 
 /* =========================
@@ -111,6 +113,18 @@ const avatarInput =
 
 const profileStatus =
   document.getElementById("profile-status");
+
+const enableTimeLock =
+  document.getElementById("enable-time-lock");
+
+const timeLockOptions =
+  document.getElementById("time-lock-options");
+
+const unlockDatetime =
+  document.getElementById("unlock-datetime");
+
+const countdownDisplay =
+  document.getElementById("countdown-display");
 
 
 /* =========================
@@ -520,6 +534,124 @@ document
 
 
 /* =========================
+   القفل الزمني
+========================= */
+
+enableTimeLock.addEventListener(
+  "change",
+  () => {
+
+    if (enableTimeLock.checked) {
+
+      timeLockOptions.classList.remove(
+        "hidden"
+      );
+
+      const now = new Date();
+
+      now.setHours(now.getHours() + 1);
+
+      const isoString =
+        now.toISOString()
+          .slice(0, 16);
+
+      unlockDatetime.value =
+        isoString;
+
+      updateCountdown();
+
+    } else {
+
+      timeLockOptions.classList.add(
+        "hidden"
+      );
+
+      countdownDisplay.textContent = "";
+
+    }
+
+  }
+);
+
+
+unlockDatetime.addEventListener(
+  "change",
+  updateCountdown
+);
+
+
+function updateCountdown() {
+
+  if (!unlockDatetime.value) return;
+
+  const unlockTime =
+    new Date(
+      unlockDatetime.value
+    );
+
+  const now = new Date();
+
+  const diff = unlockTime - now;
+
+
+  if (diff <= 0) {
+
+    countdownDisplay.textContent =
+      "⏰ الوقت قد انتهى!";
+
+    countdownDisplay.style.color =
+      "#9bd9a5";
+
+    return;
+
+  }
+
+
+  const days =
+    Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  const hours =
+    Math.floor(
+      (diff % (1000 * 60 * 60 * 24)) /
+      (1000 * 60 * 60)
+    );
+
+  const minutes =
+    Math.floor(
+      (diff % (1000 * 60 * 60)) /
+      (1000 * 60)
+    );
+
+  const seconds =
+    Math.floor(
+      (diff % (1000 * 60)) / 1000
+    );
+
+
+  countdownDisplay.textContent =
+    `⏳ سيُفتح بعد: ${days}د ${hours}س ${minutes}د ${seconds}ث`;
+
+  countdownDisplay.style.color =
+    "#666673";
+
+}
+
+
+setInterval(() => {
+
+  if (
+    enableTimeLock.checked &&
+    unlockDatetime.value
+  ) {
+
+    updateCountdown();
+
+  }
+
+}, 1000);
+
+
+/* =========================
    إنشاء أثر
 ========================= */
 
@@ -530,6 +662,14 @@ function openTraceForm() {
   );
 
   traceMessage.focus();
+
+  enableTimeLock.checked = false;
+
+  timeLockOptions.classList.add(
+    "hidden"
+  );
+
+  countdownDisplay.textContent = "";
 
 }
 
@@ -559,6 +699,12 @@ cancelTraceButton.addEventListener(
     updateCharacterCount();
 
     traceStatus.textContent = "";
+
+    enableTimeLock.checked = false;
+
+    timeLockOptions.classList.add(
+      "hidden"
+    );
 
   }
 );
@@ -629,11 +775,28 @@ saveTraceButton.addEventListener(
 
     try {
 
+      let unlockAt = null;
+
+
+      if (
+        enableTimeLock.checked &&
+        unlockDatetime.value
+      ) {
+
+        unlockAt =
+          new Date(
+            unlockDatetime.value
+          ).toISOString();
+
+      }
+
+
       const {
         error
       } = await createTrace(
         currentUser.id,
-        message
+        message,
+        unlockAt
       );
 
 
@@ -654,6 +817,12 @@ saveTraceButton.addEventListener(
       traceMessage.value = "";
 
       updateCharacterCount();
+
+      enableTimeLock.checked = false;
+
+      timeLockOptions.classList.add(
+        "hidden"
+      );
 
 
       await loadTraces();
@@ -786,10 +955,73 @@ async function loadTraces() {
           "trace-date";
 
 
-        date.textContent =
+        const dateText =
           formatDate(
             trace.created_at
           );
+
+        const lockStatus =
+          trace.is_locked
+            ? " 🔒 مقفول"
+            : "";
+
+        date.textContent =
+          dateText + lockStatus;
+
+
+        if (trace.is_locked && trace.unlock_at) {
+
+          const unlockTime =
+            new Date(
+              trace.unlock_at
+            );
+
+          const now = new Date();
+
+          const diff =
+            unlockTime - now;
+
+
+          if (diff > 0) {
+
+            const hours =
+              Math.floor(
+                diff / (1000 * 60 * 60)
+              );
+
+            const minutes =
+              Math.floor(
+                (diff % (1000 * 60 * 60)) /
+                (1000 * 60)
+              );
+
+            const countdownDiv =
+              document.createElement(
+                "div"
+              );
+
+            countdownDiv.className =
+              "countdown-info";
+
+            countdownDiv.textContent =
+              `⏳ يُفتح بعد ${hours}س ${minutes}د`;
+
+            countdownDiv.style.color =
+              "#666673";
+
+            countdownDiv.style.fontSize =
+              "12px";
+
+            countdownDiv.style.marginTop =
+              "4px";
+
+            date.appendChild(
+              countdownDiv
+            );
+
+          }
+
+        }
 
 
         const deleteButton =
@@ -871,7 +1103,7 @@ async function loadExplore() {
     if (error) throw error;
 
     const otherTraces = (traces || []).filter(
-      trace => trace.user_id !== currentUser.id
+      trace => trace.user_id !== currentUser.id && !trace.is_locked
     );
 
     if (otherTraces.length === 0) {
