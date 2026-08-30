@@ -2,12 +2,13 @@ import { supabase } from "./supabase.js";
 
 
 /*
-  إنشاء أثر جديد
+  إنشاء أثر جديد مع وقت مستقبلي اختياري
 */
 
 export async function createTrace(
   userId,
-  message
+  message,
+  unlockAt = null
 ) {
 
   return await supabase
@@ -16,7 +17,11 @@ export async function createTrace(
 
       user_id: userId,
 
-      message: message
+      message: message,
+
+      unlock_at: unlockAt,
+
+      is_locked: unlockAt ? true : false
 
     });
 
@@ -35,7 +40,7 @@ export async function getMyTraces(
     .from("traces")
 
     .select(
-      "id, message, created_at"
+      "id, message, created_at, unlock_at, is_locked"
     )
 
     .eq(
@@ -88,7 +93,25 @@ export async function getAllTraces() {
 
   return await supabase
     .from("traces")
-    .select("id, message, created_at, user_id")
+    .select("id, message, created_at, unlock_at, is_locked, user_id")
     .order("created_at", { ascending: false });
+
+}
+
+
+/*
+  فتح الأثر المقفول
+*/
+
+export async function unlockTrace(
+  traceId
+) {
+
+  return await supabase
+    .from("traces")
+    .update({
+      is_locked: false
+    })
+    .eq("id", traceId);
 
 }
