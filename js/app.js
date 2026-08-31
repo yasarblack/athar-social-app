@@ -1,3 +1,4 @@
+alert("app.js يعمل");
 import { supabase } from "./supabase.js";
 
 import {
