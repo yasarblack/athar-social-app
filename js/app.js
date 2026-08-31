@@ -1433,14 +1433,14 @@ async function setupSocialActions(
   socialBox.appendChild(
     likeCount
   );
-
+  
+  socialBox.appendChild(
+likeCount
+ );
+  
   socialBox.appendChild(
   commentButton
 );
-  
-  socialBox.appendChild(
-    likeCount
-  );
 console.log("LIKE DONE - COMMENTS START");
 
   /* 💬 التعليقات */
