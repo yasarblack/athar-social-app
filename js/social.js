@@ -1,9 +1,9 @@
 import { supabase } from "./supabase.js";
 
 
-/*
-  إضافة إعجاب بأثر
-*/
+/* =========================
+   الإعجاب
+========================= */
 
 export async function likeTrace(
   userId,
@@ -13,24 +13,16 @@ export async function likeTrace(
   return await supabase
     .from("trace_likes")
     .insert({
-
       user_id: userId,
-
       trace_id: traceId
-
-    })
-    .on('*', payload => {
-
-      console.log('تم الإعجاب:', payload)
-
     });
 
 }
 
 
-/*
-  إزالة الإعجاب
-*/
+/* =========================
+   إزالة الإعجاب
+========================= */
 
 export async function unlikeTrace(
   userId,
@@ -46,9 +38,9 @@ export async function unlikeTrace(
 }
 
 
-/*
-  الحصول على عدد الإعجابات
-*/
+/* =========================
+   عدد الإعجابات
+========================= */
 
 export async function getLikeCount(
   traceId
@@ -56,15 +48,18 @@ export async function getLikeCount(
 
   return await supabase
     .from("trace_likes")
-    .select("*", { count: "exact" })
+    .select("*", {
+      count: "exact",
+      head: true
+    })
     .eq("trace_id", traceId);
 
 }
 
 
-/*
-  التحقق من إعجاب المستخدم
-*/
+/* =========================
+   هل المستخدم أعجب بالأثر؟
+========================= */
 
 export async function checkUserLike(
   userId,
@@ -73,7 +68,7 @@ export async function checkUserLike(
 
   return await supabase
     .from("trace_likes")
-    .select("*")
+    .select("id")
     .eq("user_id", userId)
     .eq("trace_id", traceId)
     .maybeSingle();
@@ -81,9 +76,9 @@ export async function checkUserLike(
 }
 
 
-/*
-  إضافة تعليق على أثر
-*/
+/* =========================
+   إضافة تعليق
+========================= */
 
 export async function addComment(
   userId,
@@ -94,21 +89,17 @@ export async function addComment(
   return await supabase
     .from("trace_comments")
     .insert({
-
       user_id: userId,
-
       trace_id: traceId,
-
       message: message
-
     });
 
 }
 
 
-/*
-  حذف تعليق
-*/
+/* =========================
+   حذف تعليق
+========================= */
 
 export async function deleteComment(
   commentId,
@@ -124,9 +115,9 @@ export async function deleteComment(
 }
 
 
-/*
-  جلب تعليقات الأثر
-*/
+/* =========================
+   جلب التعليقات
+========================= */
 
 export async function getTraceComments(
   traceId
@@ -134,42 +125,83 @@ export async function getTraceComments(
 
   return await supabase
     .from("trace_comments")
-    .select(
-      "id, user_id, message, created_at, profiles(display_name, avatar_url)"
-    )
+    .select(`
+      id,
+      user_id,
+      message,
+      created_at,
+      profiles(
+        display_name,
+        avatar_url
+      )
+    `)
     .eq("trace_id", traceId)
-    .order("created_at", { ascending: true });
+    .order("created_at", {
+      ascending: true
+    });
 
 }
 
 
-/*
-  الحصول على إحصائيات المستخدم
-*/
+/* =========================
+   إحصائيات المستخدم
+========================= */
 
 export async function getUserStats(
   userId
 ) {
 
-  const { data: traces } = await supabase
+  const {
+    data: traces
+  } = await supabase
     .from("traces")
-    .select("*")
+    .select("id")
     .eq("user_id", userId);
 
-  const { data: likes } = await supabase
-    .from("trace_likes")
-    .select("*", { count: "exact" })
-    .in("trace_id", (traces || []).map(t => t.id));
 
-  const { data: comments } = await supabase
+  const traceIds =
+    (traces || []).map(
+      trace => trace.id
+    );
+
+
+  if (traceIds.length === 0) {
+
+    return {
+      totalTraces: 0,
+      totalLikes: 0,
+      totalComments: 0
+    };
+
+  }
+
+
+  const {
+    count: likesCount
+  } = await supabase
+    .from("trace_likes")
+    .select("*", {
+      count: "exact",
+      head: true
+    })
+    .in("trace_id", traceIds);
+
+
+  const {
+    count: commentsCount
+  } = await supabase
     .from("trace_comments")
-    .select("*", { count: "exact" })
-    .in("trace_id", (traces || []).map(t => t.id));
+    .select("*", {
+      count: "exact",
+      head: true
+    })
+    .in("trace_id", traceIds);
+
 
   return {
     totalTraces: traces?.length || 0,
-    totalLikes: likes?.length || 0,
-    totalComments: comments?.length || 0
+    totalLikes: likesCount || 0,
+    totalComments: commentsCount || 0
   };
 
 }
