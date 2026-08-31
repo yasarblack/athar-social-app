@@ -1430,18 +1430,13 @@ async function setupSocialActions(
     }
   );
 
-  socialBox.appendChild(
-    likeCount
-  );
-  
-  socialBox.appendChild(
-likeCount
- );
-  
-  socialBox.appendChild(
-  commentButton
+socialBox.appendChild(
+  likeButton
 );
-console.log("LIKE DONE - COMMENTS START");
+
+socialBox.appendChild(
+  likeCount
+);
 
   /* 💬 التعليقات */
 
