@@ -1309,7 +1309,360 @@ async function loadExplore() {
   }
 
 }
+/* =========================
+   تفاعل الإعجاب والتعليقات
+========================= */
 
+async function setupSocialActions(
+  article,
+  trace
+) {
+
+  const socialBox =
+    document.createElement("div");
+
+  socialBox.className =
+    "social-actions";
+
+  /* ❤️ الإعجاب */
+
+  const likeButton =
+    document.createElement("button");
+
+  likeButton.className =
+    "social-button";
+
+  likeButton.textContent =
+    "❤️ إعجاب";
+
+
+  const likeCount =
+    document.createElement("span");
+
+  likeCount.className =
+    "like-count";
+
+
+  async function refreshLike() {
+
+    const {
+      count,
+      error
+    } = await getLikeCount(
+      trace.id
+    );
+
+    if (!error) {
+
+      likeCount.textContent =
+        ` ${count || 0}`;
+
+    }
+
+    const {
+      data: userLike
+    } = await checkUserLike(
+      currentUser.id,
+      trace.id
+    );
+
+    if (userLike) {
+
+      likeButton.classList.add(
+        "liked"
+      );
+
+      likeButton.textContent =
+        "💖 إلغاء الإعجاب";
+
+    } else {
+
+      likeButton.classList.remove(
+        "liked"
+      );
+
+      likeButton.textContent =
+        "❤️ إعجاب";
+
+    }
+
+  }
+
+
+  likeButton.addEventListener(
+    "click",
+    async () => {
+
+      likeButton.disabled = true;
+
+      try {
+
+        const {
+          data: existingLike
+        } = await checkUserLike(
+          currentUser.id,
+          trace.id
+        );
+
+
+        if (existingLike) {
+
+          await unlikeTrace(
+            currentUser.id,
+            trace.id
+          );
+
+        } else {
+
+          await likeTrace(
+            currentUser.id,
+            trace.id
+          );
+
+        }
+
+
+        await refreshLike();
+
+      } catch (error) {
+
+        console.error(
+          "خطأ في الإعجاب:",
+          error
+        );
+
+      }
+
+      likeButton.disabled = false;
+
+    }
+  );
+
+
+  socialBox.appendChild(
+    likeButton
+  );
+
+  socialBox.appendChild(
+    likeCount
+  );
+
+
+  /* 💬 التعليقات */
+
+  const commentButton =
+    document.createElement("button");
+
+  commentButton.className =
+    "social-button";
+
+  commentButton.textContent =
+    "💬 التعليقات";
+
+
+  const commentsBox =
+    document.createElement("div");
+
+  commentsBox.className =
+    "comments-box";
+
+  commentsBox.style.display =
+    "none";
+
+
+  const commentInput =
+    document.createElement("input");
+
+  commentInput.type =
+    "text";
+
+  commentInput.placeholder =
+    "اكتب تعليقك...";
+
+  commentInput.className =
+    "comment-input";
+
+
+  const commentSend =
+    document.createElement("button");
+
+  commentSend.className =
+    "social-button";
+
+  commentSend.textContent =
+    "إرسال";
+
+
+  const commentsList =
+    document.createElement("div");
+
+  commentsList.className =
+    "comments-list";
+
+
+  async function loadComments() {
+
+    commentsList.innerHTML =
+      "جارٍ تحميل التعليقات...";
+
+
+    const {
+      data,
+      error
+    } = await getTraceComments(
+      trace.id
+    );
+
+
+    if (error) {
+
+      commentsList.textContent =
+        "تعذر تحميل التعليقات.";
+
+      return;
+
+    }
+
+
+    commentsList.innerHTML = "";
+
+
+    if (!data || data.length === 0) {
+
+      commentsList.textContent =
+        "لا توجد تعليقات بعد.";
+
+      return;
+
+    }
+
+
+    data.forEach(
+      comment => {
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "comment";
+
+
+        const name =
+          comment.profiles?.display_name ||
+          "مستخدم";
+
+
+        item.textContent =
+          `${name}: ${comment.message}`;
+
+
+        commentsList.appendChild(
+          item
+        );
+
+      }
+    );
+
+  }
+
+
+  commentButton.addEventListener(
+    "click",
+    async () => {
+
+      if (
+        commentsBox.style.display ===
+        "none"
+      ) {
+
+        commentsBox.style.display =
+          "block";
+
+        await loadComments();
+
+      } else {
+
+        commentsBox.style.display =
+          "none";
+
+      }
+
+    }
+  );
+
+
+  commentSend.addEventListener(
+    "click",
+    async () => {
+
+      const message =
+        commentInput.value.trim();
+
+
+      if (!message) return;
+
+
+      commentSend.disabled =
+        true;
+
+
+      const {
+        error
+      } = await addComment(
+        currentUser.id,
+        trace.id,
+        message
+      );
+
+
+      if (!error) {
+
+        commentInput.value = "";
+
+        await loadComments();
+
+      } else {
+
+        console.error(
+          "خطأ في إضافة التعليق:",
+          error
+        );
+
+      }
+
+
+      commentSend.disabled =
+        false;
+
+    }
+  );
+
+
+  commentsBox.appendChild(
+    commentInput
+  );
+
+  commentsBox.appendChild(
+    commentSend
+  );
+
+  commentsBox.appendChild(
+    commentsList
+  );
+
+
+  article.appendChild(
+    socialBox
+  );
+
+  article.appendChild(
+    commentsBox
+  );
+
+
+  await refreshLike();
+
+}
 
 /* =========================
    حذف أثر
