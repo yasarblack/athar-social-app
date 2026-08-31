@@ -1447,9 +1447,12 @@ socialBox.appendChild(
     "social-button";
 
   commentButton.textContent =
-    "💬 التعليقات";
+  "💬 التعليقات";
 
-socialBox.appendChild(
+commentButton.style.display = "inline-block";
+commentButton.style.visibility = "visible";
+
+  socialBox.appendChild(
   commentButton
 );
   
