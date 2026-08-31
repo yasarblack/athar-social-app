@@ -22,6 +22,16 @@ import {
   unlockTrace
 } from "./traces.js";
 
+import {
+  likeTrace,
+  unlikeTrace,
+  getLikeCount,
+  checkUserLike,
+  addComment,
+  deleteComment,
+  getTraceComments
+} from "./social.js";
+
 
 let currentUser = null;
 let isRegisterMode = true;
