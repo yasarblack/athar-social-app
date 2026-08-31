@@ -1,296 +1,109 @@
 import { supabase } from "./supabase.js";
 
-
 /* =========================
-   الإعجاب
+الإعجاب
 ========================= */
 
 export async function likeTrace(
-  userId,
-  traceId
+userId,
+traceId
 ) {
 
-  return await supabase
-    .from("trace_likes")
-    .insert({
-      user_id: userId,
-      trace_id: traceId
-    });
+return await supabase
+.from("trace_likes")
+.insert({
+user_id: userId,
+trace_id: traceId
+});
 
 }
-
-
-/* =========================
-   إزالة الإعجاب
-========================= */
 
 export async function unlikeTrace(
-  userId,
-  traceId
+userId,
+traceId
 ) {
 
-  return await supabase
-    .from("trace_likes")
-    .delete()
-    .eq("user_id", userId)
-    .eq("trace_id", traceId);
+return await supabase
+.from("trace_likes")
+.delete()
+.eq("user_id", userId)
+.eq("trace_id", traceId);
 
 }
-
-
-/* =========================
-   عدد الإعجابات
-========================= */
 
 export async function getLikeCount(
-  traceId
+traceId
 ) {
 
-  return await supabase
-    .from("trace_likes")
-    .select("*", {
-      count: "exact",
-      head: true
-    })
-    .eq("trace_id", traceId);
+return await supabase
+.from("trace_likes")
+.select("id", {
+count: "exact",
+head: true
+})
+.eq("trace_id", traceId);
 
 }
-
-
-/* =========================
-   هل المستخدم أعجب بالأثر؟
-========================= */
 
 export async function checkUserLike(
-  userId,
-  traceId
+userId,
+traceId
 ) {
 
-  return await supabase
-    .from("trace_likes")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("trace_id", traceId)
-    .maybeSingle();
+return await supabase
+.from("trace_likes")
+.select("id")
+.eq("user_id", userId)
+.eq("trace_id", traceId)
+.maybeSingle();
 
 }
 
-
 /* =========================
-   إضافة تعليق
+التعليقات
 ========================= */
 
 export async function addComment(
-  userId,
-  traceId,
-  message
+userId,
+traceId,
+message
 ) {
 
-  return await supabase
-    .from("trace_comments")
-    .insert({
-      user_id: userId,
-      trace_id: traceId,
-      message: message
-    });
+return await supabase
+.from("trace_comments")
+.insert({
+user_id: userId,
+trace_id: traceId,
+message: message
+})
+.select()
+.single();
 
 }
-
-
-/* =========================
-   حذف تعليق
-========================= */
 
 export async function deleteComment(
-  commentId,
-  userId
+userId,
+commentId
 ) {
 
-  return await supabase
-    .from("trace_comments")
-    .delete()
-    .eq("id", commentId)
-    .eq("user_id", userId);
+return await supabase
+.from("trace_comments")
+.delete()
+.eq("id", commentId)
+.eq("user_id", userId);
 
 }
-
-
-/* =========================
-   جلب التعليقات
-========================= */
 
 export async function getTraceComments(
-  traceId
+traceId
 ) {
 
-  const {
-    data,
-    error
-  } = await supabase
-    .from("trace_comments")
-    .select(`
-      id,
-      user_id,
-      message,
-      created_at
-    `)
-    .eq("trace_id", traceId)
-    .order("created_at", {
-      ascending: true
-    });
-
-  if (error) {
-    console.error(
-      "خطأ في جلب التعليقات:",
-      error
-    );
-
-    return {
-      data: null,
-      error
-    };
-  }
-
-
-  /*
-    جلب أسماء أصحاب التعليقات
-  */
-
-  const userIds = [
-    ...new Set(
-      (data || []).map(
-        comment => comment.user_id
-      )
-    )
-  ];
-
-
-  if (userIds.length === 0) {
-
-    return {
-      data: [],
-      error: null
-    };
-
-  }
-
-
-  const {
-    data: profiles,
-    error: profileError
-  } = await supabase
-    .from("profiles")
-    .select(
-      "id, display_name, avatar_url"
-    )
-    .in("id", userIds);
-
-
-  if (profileError) {
-
-    console.error(
-      "خطأ في جلب ملفات المستخدمين:",
-      profileError
-    );
-
-    return {
-      data: null,
-      error: profileError
-    };
-
-  }
-
-
-  const profileMap =
-    new Map(
-      (profiles || []).map(
-        profile => [
-          profile.id,
-          profile
-        ]
-      )
-    );
-
-
-  const comments =
-    (data || []).map(
-      comment => ({
-        ...comment,
-        profiles:
-          profileMap.get(
-            comment.user_id
-          ) || null
-      })
-    );
-
-
-  return {
-    data: comments,
-    error: null
-  };
-
-}
-
-
-/* =========================
-   إحصائيات المستخدم
-========================= */
-
-export async function getUserStats(
-  userId
-) {
-
-  const {
-    data: traces
-  } = await supabase
-    .from("traces")
-    .select("id")
-    .eq("user_id", userId);
-
-
-  const traceIds =
-    (traces || []).map(
-      trace => trace.id
-    );
-
-
-  if (traceIds.length === 0) {
-
-    return {
-      totalTraces: 0,
-      totalLikes: 0,
-      totalComments: 0
-    };
-
-  }
-
-
-  const {
-    count: likesCount
-  } = await supabase
-    .from("trace_likes")
-    .select("*", {
-      count: "exact",
-      head: true
-    })
-    .in("trace_id", traceIds);
-
-
-  const {
-    count: commentsCount
-  } = await supabase
-    .from("trace_comments")
-    .select("*", {
-      count: "exact",
-      head: true
-    })
-    .in("trace_id", traceIds);
-
-
-  return {
-    totalTraces: traces?.length || 0,
-    totalLikes: likesCount || 0,
-    totalComments: commentsCount || 0
-  };
+return await supabase
+.from("trace_comments")
+.select("id, user_id, trace_id, message, created_at")
+.eq("trace_id", traceId)
+.order("created_at", {
+ascending: true
+});
 
 }
