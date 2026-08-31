@@ -1438,6 +1438,10 @@ socialBox.appendChild(
   likeCount
 );
 
+  socialBox.appendChild(
+  commentButton
+);
+  
   /* 💬 التعليقات */
 
   const commentButton =
