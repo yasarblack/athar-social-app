@@ -1307,7 +1307,9 @@ exploreList.innerHTML = `
    تفاعل الإعجاب والتعليقات
 ========================= */
 
-
+function setupSocialActions(article, trace) {
+  console.log("SOCIAL ACTIONS WORKING", trace.id);
+}
 
 /* =========================
    حذف أثر
