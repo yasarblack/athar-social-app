@@ -104,7 +104,6 @@ export async function deleteTrace(
 
 
 /*
-  /*
   جلب الآثار المفتوحة للاستكشاف
 */
 export async function getAllTraces() {
@@ -129,17 +128,14 @@ export async function getAllTraces() {
 
   const visibleTraces = (data || []).filter(trace => {
 
-    // أثر مفتوح
     if (!trace.is_locked) {
       return true;
     }
 
-    // أثر مقفول بدون موعد فتح
     if (!trace.unlock_at) {
       return false;
     }
 
-    // أثر انتهى وقت قفله
     return new Date(trace.unlock_at) <= now;
 
   });
@@ -148,4 +144,19 @@ export async function getAllTraces() {
     data: visibleTraces,
     error: null
   };
+}
+
+
+/*
+  فتح أثر مقفول
+*/
+export async function unlockTrace(
+  traceId
+) {
+  return await supabase
+    .from("traces")
+    .update({
+      is_locked: false
+    })
+    .eq("id", traceId);
 }
