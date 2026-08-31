@@ -1,4 +1,3 @@
-
 import { supabase } from "./supabase.js";
 
 import {
@@ -1286,7 +1285,10 @@ async function loadExplore() {
 
 
       exploreList.appendChild(article);
-
+setupSocialActions(
+  article,
+  trace
+);
     });
 
 
