@@ -979,9 +979,9 @@ if (isLocked) {
           );
 
         const lockStatus =
-          trace.is_locked
-            ? " 🔒 مقفول"
-            : "";
+  isLocked
+    ? " 🔒 مقفول"
+    : "";
 
         date.textContent =
           dateText + lockStatus;
