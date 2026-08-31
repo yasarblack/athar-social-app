@@ -1429,16 +1429,12 @@ async function setupSocialActions(
 
     }
   );
-
-
-  socialBox.appendChild(
-    likeButton
-  );
+  
 
   socialBox.appendChild(
     likeCount
   );
-
+console.log("LIKE DONE - COMMENTS START");
 
   /* 💬 التعليقات */
 
