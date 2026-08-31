@@ -1125,6 +1125,8 @@ async function loadExplore() {
 
   try {
 
+    console.log("EXPLORE START");
+    
     const {
       data: traces,
       error
