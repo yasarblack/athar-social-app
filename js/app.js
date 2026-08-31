@@ -1301,7 +1301,618 @@ exploreList.innerHTML = `
   }
 
 }
+/* =========================
+تفاعل الإعجاب والتعليقات
+========================= */
 
+function setupSocialActions(
+article,
+trace
+) {
+
+const social =
+document.createElement("div");
+
+social.className =
+"social-actions";
+
+/* =========================
+زر الإعجاب
+========================= */
+
+const likeButton =
+document.createElement("button");
+
+likeButton.type = "button";
+likeButton.className =
+"social-button";
+
+likeButton.textContent =
+"❤️ إعجاب";
+
+const likeCount =
+document.createElement("span");
+
+likeCount.className =
+"like-count";
+
+likeButton.appendChild(
+likeCount
+);
+
+async function refreshLike() {
+
+try {
+
+  const {
+    count,
+    error
+  } = await getLikeCount(
+    trace.id
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  likeCount.textContent =
+    ` ${count || 0}`;
+
+
+  if (currentUser) {
+
+    const {
+      data,
+      error: likeError
+    } = await checkUserLike(
+      currentUser.id,
+      trace.id
+    );
+
+    if (likeError) {
+      throw likeError;
+    }
+
+    if (data) {
+
+      likeButton.classList.add(
+        "liked"
+      );
+
+      likeButton.firstChild.textContent =
+        "💖 إلغاء الإعجاب";
+
+    } else {
+
+      likeButton.classList.remove(
+        "liked"
+      );
+
+      likeButton.firstChild.textContent =
+        "❤️ إعجاب";
+
+    }
+
+  }
+
+} catch (error) {
+
+  console.error(
+    "خطأ في تحميل الإعجاب:",
+    error
+  );
+
+}
+
+}
+
+likeButton.addEventListener(
+"click",
+async () => {
+
+  if (!currentUser) {
+
+    alert(
+      "يجب تسجيل الدخول أولًا."
+    );
+
+    return;
+
+  }
+
+  likeButton.disabled = true;
+
+  try {
+
+    const {
+      data
+    } = await checkUserLike(
+      currentUser.id,
+      trace.id
+    );
+
+
+    if (data) {
+
+      const {
+        error
+      } = await unlikeTrace(
+        currentUser.id,
+        trace.id
+      );
+
+      if (error) {
+        throw error;
+      }
+
+    } else {
+
+      const {
+        error
+      } = await likeTrace(
+        currentUser.id,
+        trace.id
+      );
+
+      if (error) {
+        throw error;
+      }
+
+    }
+
+    await refreshLike();
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في الإعجاب:",
+      error
+    );
+
+    alert(
+      getErrorMessage(error)
+    );
+
+  }
+
+  likeButton.disabled = false;
+
+}
+
+);
+
+/* =========================
+التعليقات
+========================= */
+
+const commentsButton =
+document.createElement("button");
+
+commentsButton.type = "button";
+commentsButton.className =
+"social-button";
+
+commentsButton.textContent =
+"💬 التعليقات";
+
+const commentsBox =
+document.createElement("div");
+
+commentsBox.className =
+"comments-box";
+
+commentsBox.style.display =
+"none";
+
+const commentsList =
+document.createElement("div");
+
+commentsList.className =
+"comments-list";
+
+const commentForm =
+document.createElement("div");
+
+commentForm.className =
+"comment-form";
+
+const commentInput =
+document.createElement("input");
+
+commentInput.type = "text";
+commentInput.placeholder =
+"اكتب تعليقك...";
+commentInput.maxLength = 1000;
+
+const commentButton =
+document.createElement("button");
+
+commentButton.type = "button";
+commentButton.textContent =
+"إرسال";
+
+commentForm.appendChild(
+commentInput
+);
+
+commentForm.appendChild(
+commentButton
+);
+
+commentsBox.appendChild(
+commentsList
+);
+
+commentsBox.appendChild(
+commentForm
+);
+
+async function loadComments() {
+
+commentsList.innerHTML =
+  `<div class="empty-state">
+    جارٍ تحميل التعليقات...
+  </div>`;
+
+
+try {
+
+  const {
+    data,
+    error
+  } = await getTraceComments(
+    trace.id
+  );
+
+  if (error) {
+    throw error;
+  }
+
+
+  commentsList.innerHTML = "";
+
+
+  if (!data || data.length === 0) {
+
+    commentsList.innerHTML =
+      `<div class="empty-state">
+        لا توجد تعليقات بعد.
+      </div>`;
+
+    return;
+
+  }
+
+
+  const userIds = [
+    ...new Set(
+      data
+        .map(comment => comment.user_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let profiles = [];
+
+  if (userIds.length > 0) {
+
+    const {
+      data: profileData,
+      error: profileError
+    } = await supabase
+      .from("profiles")
+      .select(
+        "id, display_name, avatar_url"
+      )
+      .in("id", userIds);
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    profiles =
+      profileData || [];
+
+  }
+
+
+  const profileMap =
+    new Map(
+      profiles.map(
+        profile => [
+          profile.id,
+          profile
+        ]
+      )
+    );
+
+
+  data.forEach(
+    comment => {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "comment";
+
+
+      const profile =
+        profileMap.get(
+          comment.user_id
+        );
+
+
+      const name =
+        profile?.display_name ||
+        "مستخدم الأثر";
+
+
+      const author =
+        document.createElement(
+          "strong"
+        );
+
+      author.textContent =
+        name;
+
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+      message.textContent =
+        comment.message;
+
+
+      const date =
+        document.createElement(
+          "small"
+        );
+
+      date.textContent =
+        formatDate(
+          comment.created_at
+        );
+
+
+      row.appendChild(
+        author
+      );
+
+      row.appendChild(
+        message
+      );
+
+      row.appendChild(
+        date
+      );
+
+
+      if (
+        currentUser &&
+        comment.user_id ===
+          currentUser.id
+      ) {
+
+        const deleteButton =
+          document.createElement(
+            "button"
+          );
+
+        deleteButton.type =
+          "button";
+
+        deleteButton.textContent =
+          "حذف";
+
+        deleteButton.className =
+          "comment-delete";
+
+
+        deleteButton.addEventListener(
+          "click",
+          async () => {
+
+            if (
+              !confirm(
+                "حذف هذا التعليق؟"
+              )
+            ) {
+              return;
+            }
+
+
+            deleteButton.disabled =
+              true;
+
+
+            try {
+
+              const {
+                error
+              } =
+                await deleteComment(
+                  currentUser.id,
+                  comment.id
+                );
+
+
+              if (error) {
+                throw error;
+              }
+
+
+              await loadComments();
+
+            } catch (error) {
+
+              console.error(
+                error
+              );
+
+              alert(
+                getErrorMessage(
+                  error
+                )
+              );
+
+            }
+
+
+            deleteButton.disabled =
+              false;
+
+          }
+        );
+
+
+        row.appendChild(
+          deleteButton
+        );
+
+      }
+
+
+      commentsList.appendChild(
+        row
+      );
+
+    }
+  );
+
+
+} catch (error) {
+
+  console.error(
+    "خطأ في تحميل التعليقات:",
+    error
+  );
+
+  commentsList.innerHTML =
+    `<div class="empty-state">
+      تعذر تحميل التعليقات.
+    </div>`;
+
+}
+
+}
+
+commentsButton.addEventListener(
+"click",
+async () => {
+
+  const hidden =
+    commentsBox.style.display ===
+    "none";
+
+
+  commentsBox.style.display =
+    hidden
+      ? "block"
+      : "none";
+
+
+  if (hidden) {
+    await loadComments();
+  }
+
+}
+
+);
+
+commentButton.addEventListener(
+"click",
+async () => {
+
+  if (!currentUser) {
+
+    alert(
+      "يجب تسجيل الدخول أولًا."
+    );
+
+    return;
+
+  }
+
+
+  const message =
+    commentInput.value.trim();
+
+
+  if (!message) {
+    return;
+  }
+
+
+  commentButton.disabled =
+    true;
+
+
+  try {
+
+    const {
+      error
+    } = await addComment(
+      currentUser.id,
+      trace.id,
+      message
+    );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    commentInput.value = "";
+
+    await loadComments();
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في إضافة التعليق:",
+      error
+    );
+
+    alert(
+      getErrorMessage(error)
+    );
+
+  }
+
+
+  commentButton.disabled =
+    false;
+
+}
+
+);
+
+social.appendChild(
+likeButton
+);
+
+social.appendChild(
+commentsButton
+);
+
+social.appendChild(
+commentsBox
+);
+
+article.appendChild(
+social
+);
+
+refreshLike();
+
+}
 
 /* =========================
    حذف أثر
