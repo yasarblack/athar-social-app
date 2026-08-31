@@ -1130,11 +1130,26 @@ async function loadExplore() {
 
     if (error) throw error;
 
-    const otherTraces = (traces || []).filter(
-      trace => trace.user_id !== currentUser.id && !trace.is_locked
-    );
+    const visibleTraces = (traces || []).filter(trace => {
 
-    if (otherTraces.length === 0) {
+      // أثر عادي: ظاهر
+      if (!trace.is_locked) return true;
+
+      // أثر مقفول بدون وقت: مخفي
+      if (!trace.unlock_at) return false;
+
+      // أثر مقفول وانتهى وقته: ظاهر
+      return new Date(trace.unlock_at) <= new Date();
+
+    }).filter(trace => {
+
+      // لا نعرض آثار المستخدم نفسه في الاستكشاف
+      return trace.user_id !== currentUser.id;
+
+    });
+
+
+    if (visibleTraces.length === 0) {
 
       exploreList.innerHTML = `
         <div class="empty-state">
@@ -1146,77 +1161,141 @@ async function loadExplore() {
 
     }
 
-    const userIds = [...new Set(otherTraces.map(trace => trace.user_id))];
 
-    const { data: profiles, error: profileError } = await supabase
+    const userIds = [
+      ...new Set(
+        visibleTraces.map(
+          trace => trace.user_id
+        )
+      )
+    ];
+
+
+    const {
+      data: profiles,
+      error: profileError
+    } = await supabase
       .from("profiles")
       .select("id, display_name, avatar_url")
       .in("id", userIds);
 
+
     if (profileError) throw profileError;
 
+
     const profileMap = new Map(
-      (profiles || []).map(profile => [profile.id, profile])
+      (profiles || []).map(
+        profile => [
+          profile.id,
+          profile
+        ]
+      )
     );
+
 
     exploreList.innerHTML = "";
 
-    otherTraces.forEach(trace => {
 
-      const profile = profileMap.get(trace.user_id);
+    visibleTraces.forEach(trace => {
+
+      const profile =
+        profileMap.get(
+          trace.user_id
+        );
+
 
       const name =
         profile?.display_name ||
         "مستخدم الأثر";
 
-      const article = document.createElement("article");
+
+      const article =
+        document.createElement("article");
+
       article.className = "trace";
 
-      const avatar = document.createElement("div");
+
+      const avatar =
+        document.createElement("div");
+
       avatar.className = "avatar";
+
       avatar.style.width = "42px";
       avatar.style.height = "42px";
       avatar.style.fontSize = "16px";
       avatar.style.marginBottom = "10px";
 
+
       if (profile?.avatar_url) {
 
-        const img = document.createElement("img");
-        img.src = profile.avatar_url;
-        img.alt = name;
+        const img =
+          document.createElement("img");
+
+        img.src =
+          profile.avatar_url;
+
+        img.alt =
+          name;
+
         avatar.innerHTML = "";
+
         avatar.appendChild(img);
 
       } else {
 
-        avatar.textContent = name.charAt(0).toUpperCase();
+        avatar.textContent =
+          name.charAt(0).toUpperCase();
 
       }
 
-      const author = document.createElement("div");
-      author.className = "trace-author";
-      author.textContent = `👤 ${name}`;
 
-      const message = document.createElement("div");
-      message.className = "trace-text";
-      message.textContent = trace.message;
+      const author =
+        document.createElement("div");
 
-      const date = document.createElement("div");
-      date.className = "trace-date";
-      date.textContent = `📅 ${formatDate(trace.created_at)}`;
+      author.className =
+        "trace-author";
+
+      author.textContent =
+        `👤 ${name}`;
+
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "trace-text";
+
+      message.textContent =
+        trace.message;
+
+
+      const date =
+        document.createElement("div");
+
+      date.className =
+        "trace-date";
+
+      date.textContent =
+        `📅 ${formatDate(trace.created_at)}`;
+
 
       article.appendChild(avatar);
       article.appendChild(author);
       article.appendChild(message);
       article.appendChild(date);
 
+
       exploreList.appendChild(article);
 
     });
 
+
   } catch (error) {
 
-    console.error("خطأ في تحميل الاستكشاف:", error);
+    console.error(
+      "خطأ في تحميل الاستكشاف:",
+      error
+    );
 
     exploreList.innerHTML = `
       <div class="empty-state">
@@ -1224,6 +1303,9 @@ async function loadExplore() {
       </div>
     `;
 
+  }
+
+}
   }
 
 }
