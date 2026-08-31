@@ -1137,24 +1137,25 @@ async function loadExplore() {
     }
 
     const visibleTraces = (traces || [])
-      .filter(trace => {
+  .filter(trace => trace.user_id)
+  .filter(trace => {
 
-        if (!trace.is_locked) {
-          return true;
-        }
+    if (!trace.is_locked) {
+      return true;
+    }
 
-        if (!trace.unlock_at) {
-          return false;
-        }
+    if (!trace.unlock_at) {
+      return false;
+    }
 
-        return new Date(trace.unlock_at) <= new Date();
+    return new Date(trace.unlock_at) <= new Date();
 
-      })
-      .filter(trace => {
+  })
+  .filter(trace => {
 
-        return trace.user_id !== currentUser.id;
+    return trace.user_id !== currentUser.id;
 
-      });
+  });
 
     if (visibleTraces.length === 0) {
 
