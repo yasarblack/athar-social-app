@@ -1284,17 +1284,20 @@ async function loadExplore() {
 
   } catch (error) {
 
-    console.error(
-      "خطأ في تحميل الاستكشاف:",
-      error
-    );
 
-    exploreList.innerHTML = `
-      <div class="empty-state">
-        <p>تعذر تحميل الآثار.</p>
-      </div>
-    `;
+console.error(
+  "خطأ في تحميل الاستكشاف:",
+  error
+);
 
+exploreList.innerHTML = `
+  <div class="empty-state">
+    <p>تعذر تحميل الآثار.</p>
+    <p style="font-size:12px; direction:ltr;">
+      ${error?.message || "خطأ غير معروف"}
+    </p>
+  </div>
+`;
   }
 
 }
