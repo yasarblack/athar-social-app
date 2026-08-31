@@ -1316,7 +1316,10 @@ async function setupSocialActions(
   socialBox.className =
     "social-actions";
 
-  /* ❤️ الإعجاب */
+
+  /* =========================
+     ❤️ الإعجاب
+  ========================= */
 
   const likeButton =
     document.createElement("button");
@@ -1351,12 +1354,14 @@ async function setupSocialActions(
 
     }
 
+
     const {
       data: userLike
     } = await checkUserLike(
       currentUser.id,
       trace.id
     );
+
 
     if (userLike) {
 
@@ -1385,7 +1390,8 @@ async function setupSocialActions(
     "click",
     async () => {
 
-      likeButton.disabled = true;
+      likeButton.disabled =
+        true;
 
       try {
 
@@ -1425,41 +1431,28 @@ async function setupSocialActions(
 
       }
 
-      likeButton.disabled = false;
+
+      likeButton.disabled =
+        false;
 
     }
   );
 
-socialBox.appendChild(
-  likeButton
-);
 
-socialBox.appendChild(
-  likeCount
-);
+  /* =========================
+     💬 التعليقات
+  ========================= */
+
+  const commentButton =
+    document.createElement("button");
+
+  commentButton.className =
+    "social-button";
+
+  commentButton.textContent =
+    "💬 التعليقات";
 
 
-/* 💬 التعليقات */
-
-const commentButton =
-  document.createElement("button");
-
-commentButton.className =
-  "social-button";
-
-commentButton.textContent =
-  "💬 التعليقات";
-
-commentButton.style.display =
-  "inline-block";
-
-commentButton.style.visibility =
-  "visible";
-
-socialBox.appendChild(
-  commentButton
-);
-  
   const commentsBox =
     document.createElement("div");
 
@@ -1502,7 +1495,7 @@ socialBox.appendChild(
 
   async function loadComments() {
 
-    commentsList.innerHTML =
+    commentsList.textContent =
       "جارٍ تحميل التعليقات...";
 
 
@@ -1519,15 +1512,24 @@ socialBox.appendChild(
       commentsList.textContent =
         "تعذر تحميل التعليقات.";
 
+      console.error(
+        "خطأ في تحميل التعليقات:",
+        error
+      );
+
       return;
 
     }
 
 
-    commentsList.innerHTML = "";
+    commentsList.innerHTML =
+      "";
 
 
-    if (!data || data.length === 0) {
+    if (
+      !data ||
+      data.length === 0
+    ) {
 
       commentsList.textContent =
         "لا توجد تعليقات بعد.";
@@ -1541,7 +1543,9 @@ socialBox.appendChild(
       comment => {
 
         const item =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         item.className =
           "comment";
@@ -1599,29 +1603,41 @@ socialBox.appendChild(
         commentInput.value.trim();
 
 
-      if (!message) return;
+      if (!message) {
+
+        return;
+
+      }
 
 
       commentSend.disabled =
         true;
 
 
-      const {
-        error
-      } = await addComment(
-        currentUser.id,
-        trace.id,
-        message
-      );
+      try {
+
+        const {
+          error
+        } = await addComment(
+          currentUser.id,
+          trace.id,
+          message
+        );
 
 
-      if (!error) {
+        if (error) {
 
-        commentInput.value = "";
+          throw error;
+
+        }
+
+
+        commentInput.value =
+          "";
 
         await loadComments();
 
-      } else {
+      } catch (error) {
 
         console.error(
           "خطأ في إضافة التعليق:",
@@ -1635,6 +1651,23 @@ socialBox.appendChild(
         false;
 
     }
+  );
+
+
+  /* =========================
+     إضافة العناصر للصفحة
+  ========================= */
+
+  socialBox.appendChild(
+    likeButton
+  );
+
+  socialBox.appendChild(
+    likeCount
+  );
+
+  socialBox.appendChild(
+    commentButton
   );
 
 
