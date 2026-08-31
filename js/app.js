@@ -933,17 +933,34 @@ async function loadTraces() {
 
 
         const text =
-          document.createElement(
-            "div"
-          );
+  document.createElement(
+    "div"
+  );
+
+text.className =
+  "trace-text";
 
 
-        text.className =
-          "trace-text";
+const isLocked =
+  trace.is_locked &&
+  trace.unlock_at &&
+  new Date(trace.unlock_at) > new Date();
 
 
-        text.textContent =
-          trace.message;
+if (isLocked) {
+
+  text.textContent =
+    "🔒 هذا الأثر مقفول حتى يحين موعد فتحه.";
+
+  text.style.color =
+    "#666673";
+
+} else {
+
+  text.textContent =
+    trace.message;
+
+}
 
 
         const date =
