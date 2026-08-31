@@ -1595,78 +1595,56 @@ async function setupSocialActions(
   );
 
 
-  commentSend.addEventListener(
+    commentSend.addEventListener(
     "click",
     async () => {
 
       const message =
         commentInput.value.trim();
 
-
       if (!message) {
-
         return;
+      }
+
+      commentSend.disabled = true;
+
+      const {
+        error
+      } = await addComment(
+        currentUser.id,
+        trace.id,
+        message
+      );
+
+      if (error) {
+
+        console.error(
+          "خطأ في إضافة التعليق:",
+          error
+        );
+
+        alert(
+          "خطأ في إضافة التعليق: " +
+          error.message
+        );
+
+      } else {
+
+        commentInput.value = "";
+
+        await loadComments();
 
       }
 
+      commentSend.disabled = false;
 
-      commentSend.disabled =
-        true;
-
-
-      try {
-
-        const {
-  data,
-  error
-} = await addComment(
-  currentUser.id,
-  trace.id,
-  message
-);
-
-if (error) {
-
-  console.error(
-    "خطأ في إضافة التعليق:",
-    error
+    }
   );
-
-  alert(
-    "خطأ في إضافة التعليق: " +
-    error.message
-  );
-
-} else {
-
-  console.log(
-    "تمت إضافة التعليق:",
-    data
-  );
-
-  commentInput.value = "";
-
-  await loadComments();
-
-};
 
 
   /* =========================
      إضافة العناصر للصفحة
   ========================= */
-
-  socialBox.appendChild(
-    likeButton
-  );
-
-  socialBox.appendChild(
-    likeCount
-  );
-
-  socialBox.appendChild(
-    commentButton
-  );
-
 
   commentsBox.appendChild(
     commentInput
@@ -1693,6 +1671,7 @@ if (error) {
   await refreshLike();
 
 }
+
 
 /* =========================
    حذف أثر
