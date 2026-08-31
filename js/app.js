@@ -1777,6 +1777,12 @@ async function setupSocialActions(
 
 }
 
+async function setupSocialActions(
+  article,
+  trace
+) {
+}
+  
 /* =========================
    حذف أثر
 ========================= */
