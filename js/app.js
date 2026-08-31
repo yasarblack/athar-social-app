@@ -1197,117 +1197,108 @@ async function loadExplore() {
 
     visibleTraces.forEach(trace => {
 
-      const profile =
-        profileMap.get(
-          trace.user_id
-        );
+  const profile =
+    profileMap.get(trace.user_id);
+
+  const name =
+    profile?.display_name ||
+    "مستخدم الأثر";
+
+  const article =
+    document.createElement("article");
+
+  article.className = "trace";
 
 
-      const name =
-        profile?.display_name ||
-        "مستخدم الأثر";
+  /* الصورة الشخصية */
+
+  const avatar =
+    document.createElement("div");
+
+  avatar.className = "avatar";
+
+  avatar.style.width = "42px";
+  avatar.style.height = "42px";
+  avatar.style.fontSize = "16px";
+  avatar.style.marginBottom = "10px";
 
 
-      const article =
-        document.createElement("article");
+  if (profile?.avatar_url) {
 
-      article.className = "trace";
+    const img =
+      document.createElement("img");
 
+    img.src = profile.avatar_url;
+    img.alt = name;
 
-      const avatar =
-        document.createElement("div");
+    avatar.innerHTML = "";
+    avatar.appendChild(img);
 
-      avatar.className = "avatar";
+  } else {
 
-      avatar.style.width = "42px";
-      avatar.style.height = "42px";
-      avatar.style.fontSize = "16px";
-      avatar.style.marginBottom = "10px";
+    avatar.textContent =
+      name.charAt(0).toUpperCase();
 
-
-      if (profile?.avatar_url) {
-
-        const img =
-          document.createElement("img");
-
-        img.src =
-          profile.avatar_url;
-
-        img.alt =
-          name;
-
-        avatar.innerHTML = "";
-
-        avatar.appendChild(img);
-
-      } else {
-
-        avatar.textContent =
-          name.charAt(0).toUpperCase();
-
-      }
-
-
-      const author =
-        document.createElement("div");
-
-      author.className =
-        "trace-author";
-
-      author.textContent =
-        `👤 ${name}`;
-
-
-      const message =
-        document.createElement("div");
-
-      message.className =
-        "trace-text";
-
-      message.textContent =
-        trace.message;
-
-
-      const date =
-        document.createElement("div");
-
-      date.className =
-        "trace-date";
-
-      date.textContent =
-        `📅 ${formatDate(trace.created_at)}`;
-
-
-      article.appendChild(avatar);
-      article.appendChild(author);
-      article.appendChild(message);
-      article.appendChild(date);
-
-
-      exploreList.appendChild(article);
-setupSocialActions(
-  article,
-  trace
-);
-    });
-
-
-  } catch (error) {
-
-    console.error(
-      "خطأ في تحميل الاستكشاف:",
-      error
-    );
-
-    exploreList.innerHTML = `
-      <div class="empty-state">
-        <p>تعذر تحميل الآثار.</p>
-      </div>
-    `;
-
-
-}
   }
+
+
+  /* اسم صاحب الأثر */
+
+  const author =
+    document.createElement("div");
+
+  author.className =
+    "trace-author";
+
+  author.textContent =
+    `👤 ${name}`;
+
+
+  /* نص الأثر */
+
+  const message =
+    document.createElement("div");
+
+  message.className =
+    "trace-text";
+
+  message.textContent =
+    trace.message;
+
+
+  /* التاريخ */
+
+  const date =
+    document.createElement("div");
+
+  date.className =
+    "trace-date";
+
+  date.textContent =
+    `📅 ${formatDate(trace.created_at)}`;
+
+
+  /* إضافة العناصر إلى الأثر */
+
+  article.appendChild(avatar);
+  article.appendChild(author);
+  article.appendChild(message);
+  article.appendChild(date);
+
+
+  /* إضافة الأثر إلى الصفحة */
+
+  exploreList.appendChild(article);
+
+
+  /* ⭐ إضافة الإعجاب والتعليقات */
+
+  setupSocialActions(
+    article,
+    trace
+  );
+
+});
 
 /* =========================
    تفاعل الإعجاب والتعليقات
