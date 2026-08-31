@@ -1617,41 +1617,38 @@ async function setupSocialActions(
       try {
 
         const {
-          error
-        } = await addComment(
-          currentUser.id,
-          trace.id,
-          message
-        );
+  data,
+  error
+} = await addComment(
+  currentUser.id,
+  trace.id,
+  message
+);
 
+if (error) {
 
-        if (error) {
-
-          throw error;
-
-        }
-
-
-        commentInput.value =
-          "";
-
-        await loadComments();
-
-      } catch (error) {
-
-        console.error(
-          "خطأ في إضافة التعليق:",
-          error
-        );
-
-      }
-
-
-      commentSend.disabled =
-        false;
-
-    }
+  console.error(
+    "خطأ في إضافة التعليق:",
+    error
   );
+
+  alert(
+    "خطأ في إضافة التعليق: " +
+    error.message
+  );
+
+} else {
+
+  console.log(
+    "تمت إضافة التعليق:",
+    data
+  );
+
+  commentInput.value = "";
+
+  await loadComments();
+
+};
 
 
   /* =========================
