@@ -1449,7 +1449,10 @@ socialBox.appendChild(
   commentButton.textContent =
     "💬 التعليقات";
 
-
+socialBox.appendChild(
+  commentButton
+);
+  
   const commentsBox =
     document.createElement("div");
 
