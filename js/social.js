@@ -123,22 +123,111 @@ export async function getTraceComments(
   traceId
 ) {
 
-  return await supabase
+  const {
+    data,
+    error
+  } = await supabase
     .from("trace_comments")
     .select(`
       id,
       user_id,
       message,
-      created_at,
-      profiles(
-        display_name,
-        avatar_url
-      )
+      created_at
     `)
     .eq("trace_id", traceId)
     .order("created_at", {
       ascending: true
     });
+
+  if (error) {
+    console.error(
+      "خطأ في جلب التعليقات:",
+      error
+    );
+
+    return {
+      data: null,
+      error
+    };
+  }
+
+
+  /*
+    جلب أسماء أصحاب التعليقات
+  */
+
+  const userIds = [
+    ...new Set(
+      (data || []).map(
+        comment => comment.user_id
+      )
+    )
+  ];
+
+
+  if (userIds.length === 0) {
+
+    return {
+      data: [],
+      error: null
+    };
+
+  }
+
+
+  const {
+    data: profiles,
+    error: profileError
+  } = await supabase
+    .from("profiles")
+    .select(
+      "id, display_name, avatar_url"
+    )
+    .in("id", userIds);
+
+
+  if (profileError) {
+
+    console.error(
+      "خطأ في جلب ملفات المستخدمين:",
+      profileError
+    );
+
+    return {
+      data: null,
+      error: profileError
+    };
+
+  }
+
+
+  const profileMap =
+    new Map(
+      (profiles || []).map(
+        profile => [
+          profile.id,
+          profile
+        ]
+      )
+    );
+
+
+  const comments =
+    (data || []).map(
+      comment => ({
+        ...comment,
+        profiles:
+          profileMap.get(
+            comment.user_id
+          ) || null
+      })
+    );
+
+
+  return {
+    data: comments,
+    error: null
+  };
 
 }
 
