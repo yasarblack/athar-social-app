@@ -2,110 +2,130 @@ import { supabase } from "./supabase.js";
 
 
 /*
-  إنشاء أثر جديد مع وقت مستقبلي اختياري
+  إنشاء أثر جديد
 */
-
 export async function createTrace(
   userId,
   message,
   unlockAt = null
 ) {
-
   return await supabase
     .from("traces")
     .insert({
-
       user_id: userId,
-
       message: message,
-
       unlock_at: unlockAt,
-
-      is_locked: unlockAt ? true : false
-
+      is_locked: unlockAt
+        ? new Date(unlockAt) > new Date()
+        : false
     });
-
 }
 
 
 /*
   جلب آثار المستخدم الحالي
 */
+export async function getMyTraces(userId) {
 
-export async function getMyTraces(
-  userId
-) {
-
-  return await supabase
+  const { data, error } = await supabase
     .from("traces")
-
     .select(
       "id, message, created_at, unlock_at, is_locked"
     )
+    .eq("user_id", userId)
+    .order("created_at", {
+      ascending: false
+    });
 
-    .eq(
-      "user_id",
-      userId
+  if (error) {
+    return { data: null, error };
+  }
+
+
+  /*
+    فتح الآثار التي انتهى وقتها
+  */
+  const now = new Date();
+
+  const expiredIds = (data || [])
+    .filter(trace =>
+      trace.is_locked &&
+      trace.unlock_at &&
+      new Date(trace.unlock_at) <= now
     )
+    .map(trace => trace.id);
 
-    .order(
-      "created_at",
-      {
-        ascending: false
-      }
-    );
 
+  if (expiredIds.length > 0) {
+
+    const { error: updateError } = await supabase
+      .from("traces")
+      .update({
+        is_locked: false
+      })
+      .in("id", expiredIds)
+      .eq("user_id", userId);
+
+    if (!updateError) {
+
+      data.forEach(trace => {
+
+        if (expiredIds.includes(trace.id)) {
+          trace.is_locked = false;
+        }
+
+      });
+
+    }
+
+  }
+
+
+  return {
+    data,
+    error: null
+  };
 }
 
 
 /*
   حذف أثر
 */
-
 export async function deleteTrace(
   userId,
   traceId
 ) {
-
   return await supabase
     .from("traces")
-
     .delete()
-
-    .eq(
-      "id",
-      traceId
-    )
-
-    .eq(
-      "user_id",
-      userId
-    );
-
+    .eq("id", traceId)
+    .eq("user_id", userId);
 }
 
 
 /*
-  جلب جميع الآثار من المستخدمين
+  جلب الآثار المفتوحة للاستكشاف
 */
-
 export async function getAllTraces() {
 
   return await supabase
     .from("traces")
-    .select("id, message, created_at, unlock_at, is_locked, user_id")
-    .order("created_at", { ascending: false });
-
+    .select(
+      "id, message, created_at, unlock_at, is_locked, user_id"
+    )
+    .or(
+      "is_locked.eq.false,unlock_at.is.null,unlock_at.lte.now()"
+    )
+    .order("created_at", {
+      ascending: false
+    });
 }
 
 
 /*
-  فتح الأثر المقفول
+  فتح أثر مقفول
 */
-
-export async function unlockTrace(
-  traceId
-) {
+export async function unlockTrace(traceId) {
 
   return await supabase
     .from("traces")
