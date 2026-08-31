@@ -1113,7 +1113,191 @@ if (isLocked) {
    تحميل الاستكشاف
 ========================= */
 
+/* =========================
+   تحميل الاستكشاف
+========================= */
 
+async function loadExplore() {
+
+  if (!currentUser || !exploreList) return;
+
+  exploreList.innerHTML = `
+    <div class="empty-state">
+      <p>🌍 جارٍ تحميل الآثار...</p>
+    </div>
+  `;
+
+  try {
+
+    const {
+      data: traces,
+      error
+    } = await getAllTraces();
+
+    if (error) {
+      throw error;
+    }
+
+    const visibleTraces = (traces || [])
+      .filter(trace => {
+
+        if (!trace.is_locked) {
+          return true;
+        }
+
+        if (!trace.unlock_at) {
+          return false;
+        }
+
+        return new Date(trace.unlock_at) <= new Date();
+
+      })
+      .filter(trace => {
+
+        return trace.user_id !== currentUser.id;
+
+      });
+
+    if (visibleTraces.length === 0) {
+
+      exploreList.innerHTML = `
+        <div class="empty-state">
+          <p>✨ لا توجد آثار من مستخدمين آخرين بعد.</p>
+        </div>
+      `;
+
+      return;
+    }
+
+    const userIds = [
+      ...new Set(
+        visibleTraces.map(
+          trace => trace.user_id
+        )
+      )
+    ];
+
+    const {
+      data: profiles,
+      error: profileError
+    } = await supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .in("id", userIds);
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    const profileMap = new Map(
+      (profiles || []).map(
+        profile => [
+          profile.id,
+          profile
+        ]
+      )
+    );
+
+    exploreList.innerHTML = "";
+
+    visibleTraces.forEach(trace => {
+
+      const profile =
+        profileMap.get(trace.user_id);
+
+      const name =
+        profile?.display_name ||
+        "مستخدم الأثر";
+
+      const article =
+        document.createElement("article");
+
+      article.className = "trace";
+
+      const avatar =
+        document.createElement("div");
+
+      avatar.className = "avatar";
+
+      avatar.style.width = "42px";
+      avatar.style.height = "42px";
+      avatar.style.fontSize = "16px";
+      avatar.style.marginBottom = "10px";
+
+      if (profile?.avatar_url) {
+
+        const img =
+          document.createElement("img");
+
+        img.src = profile.avatar_url;
+        img.alt = name;
+
+        avatar.appendChild(img);
+
+      } else {
+
+        avatar.textContent =
+          name.charAt(0).toUpperCase();
+
+      }
+
+      const author =
+        document.createElement("div");
+
+      author.className =
+        "trace-author";
+
+      author.textContent =
+        `👤 ${name}`;
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "trace-text";
+
+      message.textContent =
+        trace.message;
+
+      const date =
+        document.createElement("div");
+
+      date.className =
+        "trace-date";
+
+      date.textContent =
+        `📅 ${formatDate(trace.created_at)}`;
+
+      article.appendChild(avatar);
+      article.appendChild(author);
+      article.appendChild(message);
+      article.appendChild(date);
+
+      exploreList.appendChild(article);
+
+      setupSocialActions(
+        article,
+        trace
+      );
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في تحميل الاستكشاف:",
+      error
+    );
+
+    exploreList.innerHTML = `
+      <div class="empty-state">
+        <p>تعذر تحميل الآثار.</p>
+      </div>
+    `;
+
+  }
+
+}
 /* =========================
    تفاعل الإعجاب والتعليقات
 ========================= */
