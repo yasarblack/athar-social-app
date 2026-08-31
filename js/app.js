@@ -1288,18 +1288,31 @@ async function loadExplore() {
 
   /* إضافة الأثر إلى الصفحة */
 
-  exploreList.appendChild(article);
+    exploreList.appendChild(article);
 
+    setupSocialActions(
+      article,
+      trace
+    );
 
-  /* ⭐ إضافة الإعجاب والتعليقات */
+  });
 
-  setupSocialActions(
-    article,
-    trace
+} catch (error) {
+
+  console.error(
+    "خطأ في تحميل الاستكشاف:",
+    error
   );
 
-});
+  exploreList.innerHTML = `
+    <div class="empty-state">
+      <p>تعذر تحميل الآثار.</p>
+    </div>
+  `;
 
+}
+
+}
 /* =========================
    تفاعل الإعجاب والتعليقات
 ========================= */
