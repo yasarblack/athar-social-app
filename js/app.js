@@ -1167,13 +1167,14 @@ async function loadExplore() {
       return;
     }
 
+    
     const userIds = [
-      ...new Set(
-        visibleTraces.map(
-          trace => trace.user_id
-        )
-      )
-    ];
+  ...new Set(
+    visibleTraces
+      .map(trace => trace.user_id)
+      .filter(userId => userId)
+  )
+];
 
     const {
       data: profiles,
