@@ -1438,25 +1438,25 @@ socialBox.appendChild(
   likeCount
 );
 
-  socialBox.appendChild(
-  commentButton
-);
-  
-  /* 💬 التعليقات */
 
-  const commentButton =
-    document.createElement("button");
+/* 💬 التعليقات */
 
-  commentButton.className =
-    "social-button";
+const commentButton =
+  document.createElement("button");
 
-  commentButton.textContent =
+commentButton.className =
+  "social-button";
+
+commentButton.textContent =
   "💬 التعليقات";
 
-commentButton.style.display = "inline-block";
-commentButton.style.visibility = "visible";
+commentButton.style.display =
+  "inline-block";
 
-  socialBox.appendChild(
+commentButton.style.visibility =
+  "visible";
+
+socialBox.appendChild(
   commentButton
 );
   
