@@ -1429,7 +1429,10 @@ async function setupSocialActions(
 
     }
   );
-  
+
+  socialBox.appendChild(
+    likeCount
+  );
 
   socialBox.appendChild(
     likeCount
