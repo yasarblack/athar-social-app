@@ -1113,10 +1113,6 @@ if (isLocked) {
    تحميل الاستكشاف
 ========================= */
 
-/* =========================
-   تحميل الاستكشاف
-========================= */
-
 async function loadExplore() {
 
   if (!currentUser || !exploreList) return;
