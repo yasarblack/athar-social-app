@@ -513,12 +513,17 @@ document
         );
 
 
-        document
-          .querySelectorAll(".page")
-          .forEach(section => {
+        document.querySelectorAll(".page").forEach(section => {
+  section.classList.add("hidden");
+});
 
-            section.classList.add(
-              "hidden"
+const targetPage = document.getElementById(`page-${page}`);
+
+if (targetPage) {
+  targetPage.classList.remove("hidden");
+} else {
+  console.error("الصفحة غير موجودة:", `page-${page}`);
+}
             );
 
           });
