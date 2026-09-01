@@ -1091,6 +1091,11 @@ if (isLocked) {
           article
         );
 
+        setupSocialActions(
+  article,
+  trace
+);
+        
       }
     );
 
