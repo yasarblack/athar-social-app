@@ -33,9 +33,9 @@ import {
 
 
 
-// import {
-//   getMyConversations
-// } from "./messages.js";
+import {
+  getMyConversations
+} from "./messages.js";
 
 let currentUser = null;
 let isRegisterMode = true;
