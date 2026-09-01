@@ -543,6 +543,18 @@ document
 
           loadExplore();
 
+if (page === "explore") {
+
+  loadExplore();
+
+}
+
+if (page === "messages") {
+
+  loadMessages();
+
+}
+          
         }
 
       }
