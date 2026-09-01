@@ -1110,7 +1110,7 @@ if (isLocked) {
         traceList.appendChild(
           article
         );
-setupSocialActions(article, trace);
+
         
         setupSocialActions(
   article,
