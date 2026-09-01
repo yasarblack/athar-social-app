@@ -1328,6 +1328,77 @@ exploreList.innerHTML = `
 
 }
 /* =========================
+   تحميل الرسائل
+========================= */
+
+async function loadMessages() {
+
+  if (!currentUser || !messagesList) return;
+
+  messagesList.innerHTML = `
+    <div class="empty-state">
+      جارٍ تحميل الرسائل...
+    </div>
+  `;
+
+  try {
+
+    const {
+      data,
+      error
+    } = await getMyConversations(
+      currentUser.id
+    );
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+
+      messagesList.innerHTML = `
+        <div class="empty-state">
+          لا توجد رسائل بعد.
+        </div>
+      `;
+
+      return;
+    }
+
+    messagesList.innerHTML = "";
+
+    data.forEach(conversation => {
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "message-conversation";
+
+      item.textContent =
+        conversation.name;
+
+      messagesList.appendChild(item);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في تحميل الرسائل:",
+      error
+    );
+
+    messagesList.innerHTML = `
+      <div class="empty-state">
+        تعذر تحميل الرسائل.
+      </div>
+    `;
+
+  }
+
+}
+/* =========================
 تفاعل الإعجاب والتعليقات
 ========================= */
 
