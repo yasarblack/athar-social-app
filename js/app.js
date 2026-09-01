@@ -120,6 +120,9 @@ const traceList =
 const exploreList =
   document.getElementById("explore-list");
 
+const messagesList =
+  document.getElementById("messages-list");
+
 const traceCount =
   document.getElementById("trace-count");
 
