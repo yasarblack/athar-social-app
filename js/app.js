@@ -1652,9 +1652,9 @@ try {
 
 
       const name =
-        profile?.display_name ||
-        "مستخدم الأثر";
-
+  profile?.display_name?.trim() ||
+  "مستخدم الأثر";
+      
 
       const author =
         document.createElement(
