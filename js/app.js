@@ -526,8 +526,8 @@ document
       }
 
       if (page === "messages") {
-        loadMessages();
-      }
+  // loadMessages();
+}
 
     });
 
