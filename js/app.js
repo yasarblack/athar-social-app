@@ -32,6 +32,11 @@ import {
 } from "./social.js";
 
 
+import {
+  getMyConversations
+} from "./messages.js";
+
+
 let currentUser = null;
 let isRegisterMode = true;
 let countdownIntervals = new Map();
