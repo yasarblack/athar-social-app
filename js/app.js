@@ -489,85 +489,49 @@ document
   .querySelectorAll(".nav-button")
   .forEach(button => {
 
-    button.addEventListener(
-      "click",
-      () => {
+    button.addEventListener("click", () => {
 
-        const page =
-          button.dataset.page;
+      const page = button.dataset.page;
 
+      document
+        .querySelectorAll(".nav-button")
+        .forEach(btn => btn.classList.remove("active"));
 
-        document
-          .querySelectorAll(".nav-button")
-          .forEach(btn => {
+      button.classList.add("active");
 
-            btn.classList.remove(
-              "active"
-            );
+      document
+        .querySelectorAll(".page")
+        .forEach(section => {
+          section.classList.add("hidden");
+        });
 
-          });
+      const targetPage =
+        document.getElementById(`page-${page}`);
 
-
-        button.classList.add(
-          "active"
+      if (targetPage) {
+        targetPage.classList.remove("hidden");
+      } else {
+        console.error(
+          "الصفحة غير موجودة:",
+          `page-${page}`
         );
-
-
-        document.querySelectorAll(".page").forEach(section => {
-  section.classList.add("hidden");
-});
-
-const targetPage = document.getElementById(`page-${page}`);
-
-if (targetPage) {
-  targetPage.classList.remove("hidden");
-} else {
-  console.error("الصفحة غير موجودة:", `page-${page}`);
-}
-            );
-
-          });
-
-
-        document
-          .getElementById(
-            `page-${page}`
-          )
-          .classList.remove(
-            "hidden"
-          );
-
-
-        if (page === "traces") {
-
-          loadTraces();
-
-        }
-
-        if (page === "explore") {
-
-          loadExplore();
-
-if (page === "explore") {
-
-  loadExplore();
-
-}
-
-if (page === "messages") {
-
-  loadMessages();
-
-}
-          
-        }
-
       }
-    );
+
+      if (page === "traces") {
+        loadTraces();
+      }
+
+      if (page === "explore") {
+        loadExplore();
+      }
+
+      if (page === "messages") {
+        loadMessages();
+      }
+
+    });
 
   });
-
-
 /* =========================
    القفل الزمني
 ========================= */
