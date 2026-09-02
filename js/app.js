@@ -1380,6 +1380,79 @@ async function loadMessages() {
     `;
   }
 }
+const sendMessageButton =
+  document.getElementById("send-message-button");
+
+if (sendMessageButton) {
+
+  sendMessageButton.addEventListener("click", async () => {
+
+    if (!currentUser) return;
+
+    const receiver =
+      document.getElementById("message-receiver");
+
+    const input =
+      document.getElementById("message-input");
+
+    const status =
+      document.getElementById("message-status");
+
+    const receiverId = receiver?.value;
+    const message = input?.value.trim();
+
+    if (!receiverId) {
+      status.textContent =
+        "اختر مستخدماً أولاً.";
+      return;
+    }
+
+    if (!message) {
+      status.textContent =
+        "اكتب رسالة أولاً.";
+      return;
+    }
+
+    sendMessageButton.disabled = true;
+    status.textContent = "جارٍ الإرسال...";
+
+    try {
+
+      const { error } =
+        await sendMessage(
+          currentUser.id,
+          receiverId,
+          message
+        );
+
+      if (error) throw error;
+
+      input.value = "";
+
+      status.textContent =
+        "تم إرسال الرسالة ✓";
+
+      await loadMessages();
+
+    } catch (error) {
+
+      console.error(
+        "خطأ في إرسال الرسالة:",
+        error
+      );
+
+      status.textContent =
+        "تعذر إرسال الرسالة.";
+
+    } finally {
+
+      sendMessageButton.disabled = false;
+
+    }
+
+  });
+
+}
 /* =========================
 تفاعل الإعجاب والتعليقات
 ========================= */
