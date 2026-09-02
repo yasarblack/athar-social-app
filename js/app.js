@@ -1304,6 +1304,13 @@ exploreList.innerHTML = `
 async function loadMessages() {
   if (!currentUser || !messagesList) return;
 
+  const receiverSelect =
+    document.getElementById("message-receiver");
+
+  // نحفظ المستخدم المختار حتى لا يختفي بعد الإرسال
+  const selectedReceiverId =
+    receiverSelect?.value || "";
+
   messagesList.innerHTML = `
     <div class="empty-state">
       جارٍ تحميل الرسائل...
@@ -1311,64 +1318,108 @@ async function loadMessages() {
   `;
 
   try {
-    const { data: conversations, error } =
-      await getMyConversations(currentUser.id);
+
+    const {
+      data: conversations,
+      error
+    } = await getMyConversations(
+      currentUser.id
+    );
 
     if (error) throw error;
 
-    if (!conversations || conversations.length === 0) {
+    if (
+      !conversations ||
+      conversations.length === 0
+    ) {
+
       messagesList.innerHTML = `
         <div class="empty-state">
           لا توجد رسائل بعد.
         </div>
       `;
+
     } else {
+
       messagesList.innerHTML = "";
 
-      conversations.forEach(conversation => {
-        const item = document.createElement("div");
+      conversations.forEach(
+        conversation => {
 
-        item.className = "message-conversation";
+          const item =
+            document.createElement("div");
 
-        item.textContent =
-          `${conversation.name}: ${conversation.last_message}`;
+          item.className =
+            "message-conversation";
 
-        messagesList.appendChild(item);
-      });
+          item.textContent =
+            `${conversation.name}: ${conversation.last_message}`;
+
+          messagesList.appendChild(item);
+        }
+      );
     }
 
+    // =========================
     // تحميل المستخدمين
+    // =========================
+
     const {
       data: users,
       error: usersError
-    } = await getUsers(currentUser.id);
+    } = await getUsers(
+      currentUser.id
+    );
 
     if (usersError) throw usersError;
 
-    const receiverSelect =
-      document.getElementById("message-receiver");
-
     if (receiverSelect) {
+
       receiverSelect.innerHTML =
         `<option value="">اختر مستخدماً</option>`;
 
       (users || []).forEach(user => {
+
         const option =
           document.createElement("option");
 
-        console.log(
-  "USER OPTION:",
-  user.display_name,
-  user.id
-);
-
-option.value = user.id;
+        option.value = user.id;
 
         option.textContent =
-          user.display_name || "مستخدم الأثر";
+          user.display_name ||
+          "مستخدم الأثر";
 
-        receiverSelect.appendChild(option);
+        receiverSelect.appendChild(
+          option
+        );
       });
+
+      // إعادة المستخدم المختار
+      if (selectedReceiverId) {
+
+        const userStillExists =
+          (users || []).some(
+            user =>
+              user.id === selectedReceiverId
+          );
+
+        if (userStillExists) {
+          receiverSelect.value =
+            selectedReceiverId;
+        }
+      }
+    }
+
+    // إذا كان هناك مستخدم مختار،
+    // نعرض المحادثة كاملة معه
+    if (
+      selectedReceiverId &&
+      receiverSelect?.value === selectedReceiverId
+    ) {
+
+      await loadConversation(
+        selectedReceiverId
+      );
     }
 
   } catch (error) {
