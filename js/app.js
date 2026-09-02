@@ -1238,13 +1238,32 @@ async function loadExplore() {
       }
 
       const author =
-        document.createElement("div");
+  document.createElement("div");
 
-      author.className =
-        "trace-author";
+author.className =
+  "trace-author";
 
-      author.textContent =
-        `👤 ${name}`;
+author.textContent =
+  `👤 ${name}`;
+
+author.style.cursor =
+  "pointer";
+
+author.title =
+  "عرض الملف الشخصي";
+
+author.addEventListener(
+  "click",
+  () => {
+
+    console.log(
+      "فتح ملف المستخدم:",
+      trace.user_id
+    );
+
+    // سنربط هذا لاحقاً بصفحة بروفايل المستخدم
+  }
+);
 
       const message =
         document.createElement("div");
