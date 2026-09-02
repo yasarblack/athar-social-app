@@ -1357,7 +1357,13 @@ async function loadMessages() {
         const option =
           document.createElement("option");
 
-        option.value = user.user_id;
+        console.log(
+  "USER OPTION:",
+  user.display_name,
+  user.id
+);
+
+option.value = user.id;
 
         option.textContent =
           user.display_name || "مستخدم الأثر";
