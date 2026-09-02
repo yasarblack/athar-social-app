@@ -1399,7 +1399,15 @@ if (sendMessageButton) {
       document.getElementById("message-status");
 
     const receiverId = receiver?.value;
-    const message = input?.value.trim();
+const message = input?.value.trim();
+
+console.log(
+  "MESSAGE DEBUG:",
+  "currentUser =", currentUser,
+  "senderId =", currentUser?.id,
+  "receiverId =", receiverId,
+  "message =", message
+);
 
     if (!receiverId) {
       status.textContent =
