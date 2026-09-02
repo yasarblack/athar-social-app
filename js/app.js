@@ -41,6 +41,7 @@ import {
 let currentUser = null;
 let isRegisterMode = true;
 let countdownIntervals = new Map();
+let selectedProfileUserId = null;
 
 
 /* =========================
