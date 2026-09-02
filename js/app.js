@@ -1745,6 +1745,76 @@ if (messageReceiver) {
     }
   );
 }
+const messageUserButton =
+  document.getElementById(
+    "message-user-button"
+  );
+
+if (messageUserButton) {
+
+  messageUserButton.addEventListener(
+    "click",
+    async () => {
+
+      if (
+        !currentUser ||
+        !selectedProfileUserId
+      ) {
+        return;
+      }
+
+      const receiverSelect =
+        document.getElementById(
+          "message-receiver"
+        );
+
+      if (!receiverSelect) {
+        return;
+      }
+
+      receiverSelect.value =
+        selectedProfileUserId;
+
+      document
+        .querySelectorAll(".page")
+        .forEach(section => {
+          section.classList.add("hidden");
+        });
+
+      const messagesPage =
+        document.getElementById(
+          "page-messages"
+        );
+
+      if (messagesPage) {
+        messagesPage.classList.remove(
+          "hidden"
+        );
+      }
+
+      document
+        .querySelectorAll(".nav-button")
+        .forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+      const messagesNav =
+        document.querySelector(
+          '.nav-button[data-page="messages"]'
+        );
+
+      if (messagesNav) {
+        messagesNav.classList.add(
+          "active"
+        );
+      }
+
+      await loadConversation(
+        selectedProfileUserId
+      );
+    }
+  );
+}
 const sendMessageButton =
   document.getElementById("send-message-button");
 
