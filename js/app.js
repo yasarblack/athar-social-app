@@ -22,6 +22,11 @@ import {
 } from "./traces.js";
 
 import {
+  loadParallelNews,
+  setupParallelNews
+} from "./parallel-news.js";
+
+import {
   likeTrace,
   unlikeTrace,
   getLikeCount,
