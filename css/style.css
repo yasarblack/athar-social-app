@@ -1728,3 +1728,31 @@ button {
 
   margin-bottom: 9px;
 }
+@media (max-width: 640px) {
+
+  .future-hero {
+    padding: 32px 20px;
+    border-radius: 23px;
+  }
+
+  .future-hero h1 {
+    font-size: clamp(38px, 12vw, 52px);
+  }
+
+  .future-hero p {
+    font-size: 14px;
+    line-height: 1.9;
+  }
+
+  .future-launch-button {
+    width: 100%;
+  }
+
+  .time-capsule-intro {
+    padding: 14px;
+  }
+
+  .trace-form-header h2 {
+    font-size: 19px;
+  }
+}
