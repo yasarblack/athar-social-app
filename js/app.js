@@ -1436,6 +1436,61 @@ async function loadMessages() {
     `;
   }
 }
+function updateConversationHeader(user) {
+
+  const header =
+    document.getElementById(
+      "conversation-header"
+    );
+
+  const name =
+    document.getElementById(
+      "conversation-name"
+    );
+
+  const avatar =
+    document.getElementById(
+      "conversation-avatar"
+    );
+
+  if (!header || !name || !avatar) {
+    return;
+  }
+
+  if (!user) {
+
+    header.classList.add("hidden");
+
+    return;
+  }
+
+  header.classList.remove("hidden");
+
+  name.textContent =
+    user.display_name ||
+    "مستخدم الأثر";
+
+  if (user.avatar_url) {
+
+    avatar.innerHTML = "";
+
+    const image =
+      document.createElement("img");
+
+    image.src =
+      user.avatar_url;
+
+    image.alt =
+      user.display_name ||
+      "صورة المستخدم";
+
+    avatar.appendChild(image);
+
+  } else {
+
+    avatar.textContent = "👤";
+  }
+}
 /* =========================
    تحميل محادثة كاملة
 ========================= */
