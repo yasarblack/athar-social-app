@@ -34,7 +34,9 @@ import {
 
 
 import {
-  getMyConversations
+  getMyConversations,
+  getUsers,
+  sendMessage
 } from "./messages.js";
 
 let currentUser = null;
