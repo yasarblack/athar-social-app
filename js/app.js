@@ -1078,6 +1078,60 @@ if (isLocked) {
           deleteButton
         );
 
+        const shareButton =
+  document.createElement("button");
+
+shareButton.className =
+  "secondary-button";
+
+shareButton.textContent =
+  "🦋 مشاركة";
+
+shareButton.addEventListener(
+  "click",
+  async () => {
+
+    const shareText =
+      isLocked
+        ? "🦋 لدي فراشة تنتظر وقتها في فراشة."
+        : `🦋 ${trace.message}`;
+
+    try {
+
+      if (navigator.share) {
+
+        await navigator.share({
+          title: "🦋 فراشة",
+          text: shareText,
+          url: window.location.href
+        });
+
+      } else {
+
+        await navigator.clipboard.writeText(
+          shareText
+        );
+
+        alert(
+          "تم نسخ الفراشة للمشاركة ✓"
+        );
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "تم إلغاء المشاركة أو تعذر تنفيذها:",
+        error
+      );
+
+    }
+  }
+);
+
+article.appendChild(
+  shareButton
+);
 
         traceList.appendChild(
           article
