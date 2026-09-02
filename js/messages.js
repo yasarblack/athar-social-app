@@ -197,3 +197,47 @@ export async function sendMessage(
     error
   };
 }
+export async function getConversation(userId, otherUserId) {
+  const {
+    data,
+    error
+  } = await supabase
+    .from("messages")
+    .select(`
+      id,
+      sender_id,
+      receiver_id,
+      message,
+      created_at
+    `)
+    .or(
+      `sender_id.eq.${userId},receiver_id.eq.${userId}`
+    )
+    .order("created_at", {
+      ascending: true
+    });
+
+  if (error) {
+    return {
+      data: null,
+      error
+    };
+  }
+
+  const conversation = (data || []).filter(
+    message =>
+      (
+        message.sender_id === userId &&
+        message.receiver_id === otherUserId
+      ) ||
+      (
+        message.sender_id === otherUserId &&
+        message.receiver_id === userId
+      )
+  );
+
+  return {
+    data: conversation,
+    error: null
+  };
+}
