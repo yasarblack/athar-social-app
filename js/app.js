@@ -1409,7 +1409,23 @@ async function loadMessages() {
         }
       }
     }
+if (selectedReceiverId) {
 
+  const selectedUser =
+    (users || []).find(
+      user =>
+        user.id === selectedReceiverId
+    );
+
+  updateConversationHeader(
+    selectedUser || null
+  );
+
+} else {
+
+  updateConversationHeader(null);
+}
+    
     // إذا كان هناك مستخدم مختار،
     // نعرض المحادثة كاملة معه
     if (
