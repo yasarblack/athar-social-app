@@ -1442,7 +1442,8 @@ if (sendMessageButton) {
   );
 
   status.textContent =
-    "تعذر إرسال الرسالة.";
+  error?.message ||
+  "تعذر إرسال الرسالة.";
 
 } finally {
 
