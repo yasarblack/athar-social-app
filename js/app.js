@@ -464,7 +464,8 @@ async function showApp(user) {
   }
 
 
-  await loadTraces();
+ await loadTraces();
+  setupParallelNews(currentUser);
 await loadNextCapsule();
 
 }
