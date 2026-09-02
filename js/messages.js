@@ -182,32 +182,18 @@ export async function sendMessage(
   receiverId,
   message
 ) {
-
   const {
-    data,
     error
   } = await supabase
-
     .from("messages")
-
     .insert({
-
       sender_id: senderId,
-
       receiver_id: receiverId,
-
       message: message
-
-    })
-
-    .select()
-
-    .single();
-
+    });
 
   return {
-    data,
+    data: null,
     error
   };
-
 }
