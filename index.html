@@ -129,111 +129,162 @@
       </nav>
 
 
-      <!-- الرئيسية -->
+<!-- الرئيسية -->
+<section
+  id="page-home"
+  class="page"
+>
 
-      <section
-        id="page-home"
-        class="page"
-      >
+  <div class="future-hero">
 
-        <div class="hero">
+    <div class="future-hero-glow"></div>
 
-          <span class="small-title">
-            الآن
-          </span>
+    <span class="small-title">
+      🕰️ الآن
+    </span>
 
-          <h1>
-            .أطلق فراشاتك<br>
-          </h1>
+    <h1>
+      اترك شيئًا<br>
+      <span>للغد.</span>
+    </h1>
 
-          <p>
-            اكتب شيئًا تريد أن يبقى.
-            <br>
-            ربما تقرؤه أنت لاحقًا،
-            وربما يصل إلى شخص اخترته.
-          </p>
+    <p>
+      بعض الأشياء لا يجب أن تُقرأ الآن.
+      <br>
+      اكتبها، حدّد لحظتها، ودع الزمن يكمل الباقي.
+    </p>
 
-          <button
-            id="new-trace-button"
-            class="primary-button"
-          >
-            اطلق فراشة
-          </button>
+    <button
+      id="new-trace-button"
+      class="primary-button future-launch-button"
+    >
+      🦋 اصنع أثراً للمستقبل
+    </button>
 
-        </div>
+  </div>
 
 
-        <!-- إطلاق فراشة -->
+  <!-- كبسولة زمنية -->
 
-        <div
-          id="trace-form"
-          class="card hidden"
+  <div class="time-capsule-intro">
+
+    <div class="capsule-icon">
+      ⏳
+    </div>
+
+    <div>
+      <strong>
+        كبسولتك القادمة
+      </strong>
+
+      <span>
+        الأشياء الجميلة تستحق أن تنتظر.
+      </span>
+    </div>
+
+  </div>
+
+
+  <!-- إطلاق فراشة -->
+
+  <div
+    id="trace-form"
+    class="card hidden"
+  >
+
+    <div class="trace-form-header">
+
+      <div>
+        <span class="small-title">
+          كبسولة جديدة
+        </span>
+
+        <h2>
+          ماذا تريد أن تترك للمستقبل؟
+        </h2>
+      </div>
+
+      <div class="capsule-mini">
+        ⏳
+      </div>
+
+    </div>
+
+
+    <textarea
+      id="trace-message"
+      placeholder="اكتب شيئاً تريد أن تقرأه في المستقبل..."
+      maxlength="5000"
+    ></textarea>
+
+
+    <div class="time-lock-section">
+
+      <label>
+        <input
+          id="enable-time-lock"
+          type="checkbox"
         >
 
-          <h2>
-            فراشة جديدة
-          </h2>
+        🔒
+        اجعلها كبسولة زمنية
+      </label>
 
-          <textarea
-            id="trace-message"
-            placeholder="أطلق فراشتك هنا..."
-            maxlength="5000"
-          ></textarea>
+      <div
+        id="time-lock-options"
+        class="hidden"
+      >
 
-          <div class="time-lock-section">
-
-            <label>
-              <input
-                id="enable-time-lock"
-                type="checkbox"
-              >
-              🔒 قفل زمني (افتح في وقت محدد)
-            </label>
-
-            <div id="time-lock-options" class="hidden">
-
-              <input
-                id="unlock-datetime"
-                type="datetime-local"
-              >
-
-              <div id="countdown-display" class="countdown"></div>
-
-            </div>
-
-          </div>
-
-          <div class="form-footer">
-
-            <span id="character-count">
-              0 / 5000
-            </span>
-
-            <div>
-
-              <button
-                id="cancel-trace"
-                class="secondary-button"
-              >
-                إلغاء
-              </button>
-
-              <button
-                id="save-trace"
-                class="primary-button"
-              >
-                إطلاق الفراشة
-              </button>
-
-            </div>
-
-          </div>
-
-          <div id="trace-message-status"></div>
-
+        <div class="lock-question">
+          متى تريد أن تفتح هذه الكبسولة؟
         </div>
 
-      </section>
+        <input
+          id="unlock-datetime"
+          type="datetime-local"
+        >
+
+        <div
+          id="countdown-display"
+          class="countdown"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <div class="form-footer">
+
+      <span id="character-count">
+        0 / 5000
+      </span>
+
+      <div>
+
+        <button
+          id="cancel-trace"
+          class="secondary-button"
+        >
+          إلغاء
+        </button>
+
+        <button
+          id="save-trace"
+          class="primary-button"
+        >
+          🦋 إطلاق إلى المستقبل
+        </button>
+
+      </div>
+
+    </div>
+
+    <div id="trace-message-status"></div>
+
+  </div>
+
+</section>
 
 
       <!-- الفراشات -->
