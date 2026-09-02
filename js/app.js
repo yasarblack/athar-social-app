@@ -1107,6 +1107,159 @@ if (isLocked) {
 
 
 /* =========================
+   NEXT TIME CAPSULE
+========================= */
+
+let nextCapsuleTimer = null;
+
+async function loadNextCapsule() {
+
+  if (!currentUser) return;
+
+  const capsule =
+    document.getElementById("next-capsule");
+
+  const countdown =
+    document.getElementById(
+      "next-capsule-countdown"
+    );
+
+  const status =
+    document.getElementById(
+      "next-capsule-status"
+    );
+
+  if (!capsule || !countdown || !status) {
+    return;
+  }
+
+  try {
+
+    const {
+      data,
+      error
+    } = await getMyTraces(
+      currentUser.id
+    );
+
+    if (error) throw error;
+
+    const now = new Date();
+
+    const lockedTraces =
+      (data || [])
+        .filter(trace =>
+          trace.is_locked &&
+          trace.unlock_at &&
+          new Date(trace.unlock_at) > now
+        )
+        .sort(
+          (a, b) =>
+            new Date(a.unlock_at) -
+            new Date(b.unlock_at)
+        );
+
+    if (lockedTraces.length === 0) {
+
+      capsule.classList.add("hidden");
+
+      if (nextCapsuleTimer) {
+        clearInterval(nextCapsuleTimer);
+        nextCapsuleTimer = null;
+      }
+
+      return;
+    }
+
+    const nextTrace =
+      lockedTraces[0];
+
+    capsule.classList.remove("hidden");
+
+    const unlockTime =
+      new Date(nextTrace.unlock_at);
+
+    function updateCountdown() {
+
+      const diff =
+        unlockTime - new Date();
+
+      if (diff <= 0) {
+
+        countdown.textContent =
+          "🦋 حان وقت فتحها";
+
+        status.textContent =
+          "وصلت اللحظة التي كنت تنتظرها.";
+
+        clearInterval(nextCapsuleTimer);
+        nextCapsuleTimer = null;
+
+        loadNextCapsule();
+
+        return;
+      }
+
+      const totalSeconds =
+        Math.floor(diff / 1000);
+
+      const days =
+        Math.floor(
+          totalSeconds / 86400
+        );
+
+      const hours =
+        Math.floor(
+          (totalSeconds % 86400) / 3600
+        );
+
+      const minutes =
+        Math.floor(
+          (totalSeconds % 3600) / 60
+        );
+
+      const seconds =
+        totalSeconds % 60;
+
+      if (days > 0) {
+
+        countdown.textContent =
+          `${days}ي ${String(hours).padStart(2, "0")}س ${String(minutes).padStart(2, "0")}د`;
+
+      } else {
+
+        countdown.textContent =
+          `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+      }
+
+      status.textContent =
+        "تنتظر لحظة فتحها...";
+    }
+
+    updateCountdown();
+
+    if (nextCapsuleTimer) {
+      clearInterval(nextCapsuleTimer);
+    }
+
+    nextCapsuleTimer =
+      setInterval(
+        updateCountdown,
+        1000
+      );
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في تحميل أقرب كبسولة:",
+      error
+    );
+
+    capsule.classList.add("hidden");
+  }
+}
+/* =========================
    تحميل الاستكشاف
 ========================= */
 
