@@ -1546,6 +1546,31 @@ async function loadConversation(
     `;
   }
 }
+const messageReceiver =
+  document.getElementById(
+    "message-receiver"
+  );
+
+if (messageReceiver) {
+
+  messageReceiver.addEventListener(
+    "change",
+    async () => {
+
+      const receiverId =
+        messageReceiver.value;
+
+      if (!receiverId) {
+        await loadMessages();
+        return;
+      }
+
+      await loadConversation(
+        receiverId
+      );
+    }
+  );
+}
 const sendMessageButton =
   document.getElementById("send-message-button");
 
