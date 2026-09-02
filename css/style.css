@@ -946,3 +946,68 @@ button {
   }
 
 }
+/* =========================
+   شكل المحادثة
+========================= */
+
+#messages-list {
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  border-radius: 16px;
+}
+
+/* الرسالة نفسها */
+
+.message-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+
+  line-height: 1.6;
+  word-wrap: break-word;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* رسائلي */
+
+.message-bubble.mine {
+  align-self: flex-end;
+
+  background: rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(99, 102, 241, 0.45);
+}
+
+/* رسائل الطرف الثاني */
+
+.message-bubble.theirs {
+  align-self: flex-start;
+
+  background: rgba(155, 217, 165, 0.18);
+  border: 1px solid rgba(155, 217, 165, 0.35);
+}
+
+/* نص الرسالة */
+
+.message-text {
+  font-size: 15px;
+}
+
+/* الوقت */
+
+.message-time {
+  margin-top: 4px;
+
+  font-size: 11px;
+  opacity: 0.6;
+
+  direction: rtl;
+}
