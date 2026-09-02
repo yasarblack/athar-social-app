@@ -1514,6 +1514,24 @@ function updateConversationHeader(user) {
 async function loadConversation(
   otherUserId
 ) {
+  const receiverSelect =
+  document.getElementById(
+    "message-receiver"
+  );
+
+const selectedOption =
+  receiverSelect?.options[
+    receiverSelect.selectedIndex
+  ];
+
+if (selectedOption && otherUserId) {
+
+  updateConversationHeader({
+    display_name:
+      selectedOption.textContent,
+    avatar_url: null
+  });
+}
   if (
     !currentUser ||
     !messagesList ||
