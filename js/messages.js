@@ -35,11 +35,50 @@ export async function getMyConversations(userId) {
     }
   }
 
+  const userIds = [...conversations.keys()];
+
+  if (userIds.length > 0) {
+    const { data: profiles, error: profileError } = await supabase
+      .from("profiles")
+      .select("user_id, display_name, avatar_url")
+      .in("user_id", userIds);
+
+    if (profileError) {
+      return { data: null, error: profileError };
+    }
+
+    const profileMap = new Map(
+      (profiles || []).map(profile => [profile.user_id, profile])
+    );
+
+    for (const conversation of conversations.values()) {
+      const profile = profileMap.get(conversation.user_id);
+
+      if (profile?.display_name) {
+        conversation.name = profile.display_name;
+      }
+
+      conversation.avatar_url = profile?.avatar_url || null;
+    }
+  }
+
   return {
     data: [...conversations.values()],
     error: null
   };
 }
+
+
+export async function getUsers(currentUserId) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("user_id, display_name, avatar_url")
+    .neq("user_id", currentUserId)
+    .order("display_name");
+
+  return { data, error };
+}
+
 
 export async function sendMessage(senderId, receiverId, message) {
   const { data, error } = await supabase
