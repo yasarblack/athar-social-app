@@ -1257,12 +1257,77 @@ author.addEventListener(
   "click",
   () => {
 
-    console.log(
-      "فتح ملف المستخدم:",
-      trace.user_id
+    selectedProfileUserId =
+      trace.user_id;
+
+    const otherProfilePage =
+      document.getElementById(
+        "page-user-profile"
+      );
+
+    if (!otherProfilePage) {
+      console.error(
+        "صفحة بروفايل المستخدم غير موجودة"
+      );
+      return;
+    }
+
+    const nameElement =
+      document.getElementById(
+        "other-profile-name"
+      );
+
+    if (nameElement) {
+      nameElement.textContent =
+        name;
+    }
+
+    const avatarElement =
+      document.getElementById(
+        "other-profile-avatar"
+      );
+
+    if (avatarElement) {
+
+      avatarElement.innerHTML = "";
+
+      if (profile?.avatar_url) {
+
+        const img =
+          document.createElement("img");
+
+        img.src =
+          profile.avatar_url;
+
+        img.alt =
+          name;
+
+        avatarElement.appendChild(
+          img
+        );
+
+      } else {
+
+        avatarElement.textContent =
+          name.charAt(0).toUpperCase();
+
+      }
+    }
+
+    document
+      .querySelectorAll(".page")
+      .forEach(section => {
+        section.classList.add("hidden");
+      });
+
+    otherProfilePage.classList.remove(
+      "hidden"
     );
 
-    // سنربط هذا لاحقاً بصفحة بروفايل المستخدم
+    console.log(
+      "تم فتح بروفايل:",
+      trace.user_id
+    );
   }
 );
 
