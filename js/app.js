@@ -529,6 +529,11 @@ document
         loadTraces();
       }
 
+if (page === "parallel-news") {
+  loadParallelNews(currentUser);
+  setupParallelNews(currentUser);
+}
+      
       if (page === "explore") {
         loadExplore();
       }
