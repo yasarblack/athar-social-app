@@ -1756,3 +1756,86 @@ button {
     font-size: 19px;
   }
 }
+/* =========================
+   NEXT TIME CAPSULE
+========================= */
+
+.next-capsule {
+  position: relative;
+  overflow: hidden;
+
+  padding: 22px 20px;
+  margin-bottom: 18px;
+
+  border: 1px solid rgba(124, 127, 242, 0.22);
+  border-radius: 22px;
+
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      rgba(124, 127, 242, 0.12),
+      transparent 40%
+    ),
+    rgba(255, 255, 255, 0.035);
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.18);
+}
+
+.next-capsule-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.next-capsule-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: rgba(124, 127, 242, 0.10);
+  border: 1px solid rgba(124, 127, 242, 0.18);
+
+  font-size: 20px;
+}
+
+.next-capsule-countdown {
+  margin-top: 18px;
+
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  direction: ltr;
+  text-align: center;
+
+  color: #aeb1ff;
+}
+
+.next-capsule-status {
+  margin-top: 7px;
+
+  text-align: center;
+
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+
+  .next-capsule {
+    padding: 18px 15px;
+    border-radius: 19px;
+  }
+
+  .next-capsule-countdown {
+    font-size: clamp(28px, 10vw, 42px);
+  }
+
+}
