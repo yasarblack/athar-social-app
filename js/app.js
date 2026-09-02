@@ -525,9 +525,9 @@ document
         loadExplore();
       }
 
-      if (page === "messages") {
-        loadMessages();
-      }
+    if (page === "messages") {
+  loadMessages();
+}
 
     });
 
@@ -1304,11 +1304,7 @@ async function loadMessages() {
 
   if (!currentUser || !messagesList) return;
 
-  messagesList.innerHTML = `
-    <div class="empty-state">
-      جارٍ تحميل الرسائل...
-    </div>
-  `;
+  messagesList.innerHTML = `<div class="empty-state">تم تشغيل loadMessages ✅</div>`;
 
   try {
 
