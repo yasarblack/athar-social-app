@@ -1436,14 +1436,19 @@ if (sendMessageButton) {
 
     } catch (error) {
 
-      console.error(
-        "خطأ في إرسال الرسالة:",
-        error
-      );
+      
+} catch (error) {
 
-      status.textContent =
-        "تعذر إرسال الرسالة.";
+  console.error(
+    "خطأ في إرسال الرسالة:",
+    error
+  );
 
+  status.textContent =
+    error?.message ||
+    "تعذر إرسال الرسالة.";
+
+}
     } finally {
 
       sendMessageButton.disabled = false;
