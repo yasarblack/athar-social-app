@@ -1518,3 +1518,213 @@ button {
     max-width: 92%;
   }
 }
+/* =========================
+   FUTURE EXPERIENCE
+========================= */
+
+.future-hero {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(124, 127, 242, 0.16),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(27, 30, 46, 0.94),
+      rgba(10, 12, 19, 0.88)
+    );
+
+  border: 1px solid var(--border);
+
+  border-radius: 28px;
+
+  padding: 42px 30px;
+
+  margin-bottom: 14px;
+
+  box-shadow:
+    0 20px 65px rgba(0, 0, 0, 0.25);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.future-hero-glow {
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -90px;
+  left: -50px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(124, 127, 242, 0.10);
+
+  filter: blur(25px);
+
+  pointer-events: none;
+}
+
+.future-hero h1 {
+  position: relative;
+
+  margin: 14px 0 18px;
+
+  font-size: clamp(42px, 10vw, 68px);
+
+  line-height: 1.12;
+
+  letter-spacing: -3px;
+}
+
+.future-hero h1 span {
+  color: #aeb1ff;
+}
+
+.future-hero p {
+  position: relative;
+
+  color: var(--muted);
+
+  font-size: 16px;
+
+  line-height: 2;
+
+  margin: 0 0 28px;
+}
+
+.future-launch-button {
+  position: relative;
+
+  min-height: 50px;
+
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+
+/* =========================
+   CAPSULE INTRO
+========================= */
+
+.time-capsule-intro {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 16px 18px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 19px;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.capsule-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background:
+    rgba(124, 127, 242, 0.12);
+
+  border: 1px solid
+    rgba(124, 127, 242, 0.20);
+
+  font-size: 21px;
+}
+
+.time-capsule-intro div:last-child {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.time-capsule-intro strong {
+  font-size: 14px;
+}
+
+.time-capsule-intro span {
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+
+/* =========================
+   TRACE FORM HEADER
+========================= */
+
+.trace-form-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+.trace-form-header h2 {
+  margin: 7px 0 0;
+
+  font-size: 22px;
+}
+
+.capsule-mini {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background:
+    rgba(124, 127, 242, 0.10);
+
+  border: 1px solid
+    rgba(124, 127, 242, 0.18);
+
+  font-size: 21px;
+}
+
+.lock-question {
+  color: #9da3b5;
+
+  font-size: 13px;
+
+  margin-bottom: 9px;
+}
