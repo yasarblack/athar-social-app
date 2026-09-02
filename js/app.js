@@ -1436,6 +1436,116 @@ async function loadMessages() {
     `;
   }
 }
+/* =========================
+   تحميل محادثة كاملة
+========================= */
+
+async function loadConversation(
+  otherUserId
+) {
+  if (
+    !currentUser ||
+    !messagesList ||
+    !otherUserId
+  ) return;
+
+  messagesList.innerHTML = `
+    <div class="empty-state">
+      جارٍ تحميل المحادثة...
+    </div>
+  `;
+
+  try {
+
+    const {
+      data: messages,
+      error
+    } = await getConversation(
+      currentUser.id,
+      otherUserId
+    );
+
+    if (error) throw error;
+
+    if (
+      !messages ||
+      messages.length === 0
+    ) {
+
+      messagesList.innerHTML = `
+        <div class="empty-state">
+          لا توجد رسائل بينكما بعد.
+        </div>
+      `;
+
+      return;
+    }
+
+    messagesList.innerHTML = "";
+
+    messages.forEach(message => {
+
+      const item =
+        document.createElement("div");
+
+      const isMine =
+        message.sender_id === currentUser.id;
+
+      item.className =
+        isMine
+          ? "message-bubble mine"
+          : "message-bubble theirs";
+
+      const text =
+        document.createElement("div");
+
+      text.className =
+        "message-text";
+
+      text.textContent =
+        message.message;
+
+      const time =
+        document.createElement("div");
+
+      time.className =
+        "message-time";
+
+      time.textContent =
+        new Date(
+          message.created_at
+        ).toLocaleString(
+          "ar",
+          {
+            dateStyle: "short",
+            timeStyle: "short"
+          }
+        );
+
+      item.appendChild(text);
+      item.appendChild(time);
+
+      messagesList.appendChild(item);
+    });
+
+    // النزول لآخر رسالة
+    messagesList.scrollTop =
+      messagesList.scrollHeight;
+
+  } catch (error) {
+
+    console.error(
+      "خطأ في تحميل المحادثة:",
+      error
+    );
+
+    messagesList.innerHTML = `
+      <div class="empty-state">
+        تعذر تحميل المحادثة.
+      </div>
+    `;
+  }
+}
 const sendMessageButton =
   document.getElementById("send-message-button");
 
