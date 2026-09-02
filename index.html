@@ -305,13 +305,38 @@
 
   <div id="messages-list">
 
-    <div class="empty-state">
-      اختبار الرسائل — الصفحة تعمل.
-    </div>
-
+  <div class="empty-state">
+    لا توجد رسائل بعد.
   </div>
 
-</section>
+</div>
+
+<div class="message-test-box">
+
+  <input
+    id="message-receiver"
+    type="text"
+    placeholder="معرّف المستخدم المستقبل"
+  >
+
+  <textarea
+    id="message-input"
+    placeholder="اكتب رسالتك..."
+    maxlength="2000"
+  ></textarea>
+
+  <button
+    id="send-message-button"
+    class="primary-button"
+  >
+    إرسال
+  </button>
+
+  <div id="message-status"></div>
+
+</div>
+
+</section>   
 
       
       <!-- الآثار -->
