@@ -1303,51 +1303,68 @@ exploreList.innerHTML = `
 ========================= */
 
 async function loadMessages() {
-
   if (!currentUser || !messagesList) return;
 
-  messagesList.innerHTML = `<div class="empty-state">تم تشغيل loadMessages ✅</div>`;
+  messagesList.innerHTML = `
+    <div class="empty-state">
+      جارٍ تحميل الرسائل...
+    </div>
+  `;
 
   try {
+    const { data: conversations, error } =
+      await getMyConversations(currentUser.id);
 
-    const {
-      data,
-      error
-    } = await getMyConversations(
-      currentUser.id
-    );
+    if (error) throw error;
 
-    if (error) {
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-
+    if (!conversations || conversations.length === 0) {
       messagesList.innerHTML = `
         <div class="empty-state">
           لا توجد رسائل بعد.
         </div>
       `;
+    } else {
+      messagesList.innerHTML = "";
 
-      return;
+      conversations.forEach(conversation => {
+        const item = document.createElement("div");
+
+        item.className = "message-conversation";
+
+        item.textContent =
+          `${conversation.name}: ${conversation.last_message}`;
+
+        messagesList.appendChild(item);
+      });
     }
 
-    messagesList.innerHTML = "";
+    // تحميل المستخدمين
+    const {
+      data: users,
+      error: usersError
+    } = await getUsers(currentUser.id);
 
-    data.forEach(conversation => {
+    if (usersError) throw usersError;
 
-      const item =
-        document.createElement("div");
+    const receiverSelect =
+      document.getElementById("message-receiver");
 
-      item.className =
-        "message-conversation";
+    if (receiverSelect) {
+      receiverSelect.innerHTML =
+        `<option value="">اختر مستخدماً</option>`;
 
-      item.textContent =
-        conversation.name;
+      (users || []).forEach(user => {
+        const option =
+          document.createElement("option");
 
-      messagesList.appendChild(item);
+        option.value = user.user_id;
 
-    });
+        option.textContent =
+          user.display_name || "مستخدم الأثر";
+
+        receiverSelect.appendChild(option);
+      });
+    }
 
   } catch (error) {
 
@@ -1361,9 +1378,7 @@ async function loadMessages() {
         تعذر تحميل الرسائل.
       </div>
     `;
-
   }
-
 }
 /* =========================
 تفاعل الإعجاب والتعليقات
