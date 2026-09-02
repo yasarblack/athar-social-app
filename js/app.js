@@ -1434,7 +1434,7 @@ if (sendMessageButton) {
 
       await loadMessages();
 
-    } catch (error) {
+  } catch (error) {
 
   console.error(
     "خطأ في إرسال الرسالة:",
@@ -1442,11 +1442,9 @@ if (sendMessageButton) {
   );
 
   status.textContent =
-    error?.message ||
     "تعذر إرسال الرسالة.";
 
-}
-    } finally {
+} finally {
 
       sendMessageButton.disabled = false;
 
