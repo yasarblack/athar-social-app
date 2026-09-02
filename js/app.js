@@ -1436,9 +1436,6 @@ if (sendMessageButton) {
 
     } catch (error) {
 
-      
-} catch (error) {
-
   console.error(
     "خطأ في إرسال الرسالة:",
     error
