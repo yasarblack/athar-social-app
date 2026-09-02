@@ -31,12 +31,11 @@ import {
   getTraceComments
 } from "./social.js";
 
-
-
 import {
   getMyConversations,
   getUsers,
-  sendMessage
+  sendMessage,
+  getConversation
 } from "./messages.js";
 
 let currentUser = null;
