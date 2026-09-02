@@ -460,6 +460,7 @@ async function showApp(user) {
 
 
   await loadTraces();
+await loadNextCapsule();
 
 }
 
