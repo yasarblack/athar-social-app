@@ -216,6 +216,25 @@ export function setupParallelNews(user) {
     return;
   }
 
+if (
+  !addButton ||
+  !form ||
+  !publishButton
+) return;
+
+if (
+  !user ||
+  !isParallelNewsAdmin(user.id)
+) {
+  return;
+}
+
+if (publishButton.dataset.listenerAttached === "true") {
+  return;
+}
+
+publishButton.dataset.listenerAttached = "true";
+
   addButton.addEventListener(
     "click",
     () => {
