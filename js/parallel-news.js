@@ -30,24 +30,48 @@ export async function createParallelNews(title, content) {
 }
 
 async function shareNews(news) {
+  const url =
+    "https://yasarblack.github.io/athar-social-app/#parallel-news";
+
   const text =
     `🪐 ${news.title}\n\n` +
     `${news.content}\n\n` +
     `🦋 من أخبار العالم الموازي`;
 
   try {
-    if (navigator.share) {
+    if (
+      navigator.share &&
+      typeof navigator.share === "function"
+    ) {
       await navigator.share({
         title: `🪐 ${news.title}`,
-        text
+        text,
+        url
       });
-    } else if (navigator.clipboard) {
-      await navigator.clipboard.writeText(text);
-      alert("تم نسخ الخبر للمشاركة ✓");
+
+      return;
     }
+
+    if (
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === "function"
+    ) {
+      await navigator.clipboard.writeText(
+        `${text}\n\n${url}`
+      );
+
+      alert("تم نسخ الخبر مع رابط فراشة ✓");
+      return;
+    }
+
+    alert("المشاركة غير متاحة على هذا المتصفح.");
   } catch (error) {
-    console.log(
-      "تم إلغاء المشاركة:",
+    if (error?.name === "AbortError") {
+      return;
+    }
+
+    console.error(
+      "خطأ في مشاركة الخبر:",
       error
     );
   }
