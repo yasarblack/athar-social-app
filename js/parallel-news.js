@@ -176,6 +176,46 @@ export async function loadParallelNews(user) {
       () => shareNews(news)
     );
 
+    if (
+  user &&
+  isParallelNewsAdmin(user.id)
+) {
+  const deleteButton =
+    document.createElement("button");
+
+  deleteButton.className =
+    "secondary-button";
+
+  deleteButton.textContent =
+    "🗑️ حذف";
+
+  deleteButton.addEventListener(
+    "click",
+    async () => {
+
+      if (!confirm("حذف هذا الخبر؟")) {
+        return;
+      }
+
+      const { error } =
+        await supabase
+          .from("parallel_news")
+          .delete()
+          .eq("id", news.id);
+
+      if (error) {
+        console.error(error);
+        alert("تعذر حذف الخبر.");
+        return;
+      }
+
+      article.remove();
+    }
+  );
+
+  footer.appendChild(deleteButton);
+}
+
     footer.appendChild(date);
     footer.appendChild(shareButton);
 
