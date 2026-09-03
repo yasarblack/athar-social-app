@@ -165,17 +165,6 @@ export async function loadParallelNews(user) {
     const shareButton =
       document.createElement("button");
 
-    shareButton.className =
-      "secondary-button parallel-news-share";
-
-    shareButton.textContent =
-      "🦋 مشاركة";
-
-    shareButton.addEventListener(
-      "click",
-      () => shareNews(news)
-    );
-
     if (
   user &&
   isParallelNewsAdmin(user.id)
@@ -215,6 +204,16 @@ export async function loadParallelNews(user) {
 
   footer.appendChild(deleteButton);
 }
+    shareButton.className =
+      "secondary-button parallel-news-share";
+
+    shareButton.textContent =
+      "🦋 مشاركة";
+
+    shareButton.addEventListener(
+      "click",
+      () => shareNews(news)
+    );
 
     footer.appendChild(date);
     footer.appendChild(shareButton);
